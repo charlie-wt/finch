@@ -7,6 +7,13 @@
 #include <vector>
 
 
+// note, by default (on android) braille is
+// broken; characters with only dots on the right
+// side display their dots on the left side
+// instead.
+//
+// see https://github.com/google/fonts/issues/3935
+
 struct Block {
     wchar_t to_char () const;
 

@@ -30,22 +30,21 @@ BrailleGrid::BrailleGrid (TermInfo const &t)
 }
 
 void BrailleGrid::set (Pixel p, bool on) {
-    /* std::cout << "set " << p << " to " << pr(on) << "\n"; */
     Pixel const cell { p.x / 2, p.y / 4 };
     Pixel const inner { p.x % 2, p.y % 4 };
-    /* std::cout << "cell: " << cell << "\n"; */
-    /* std::cout << "inner: " << inner << "\n"; */
 
-    uint8_t const bit = inner.x == 0
-        ? inner.y
-        : inner.y + 4;
+    uint8_t const bit_idx = inner.y + 4 * inner.x;
 
     int64_t const block_idx = (cell.y * char_w) + cell.x;
 
     Block const before = data[block_idx];
-    Block const after { static_cast<uint8_t>(before.data | uint8_t {on} << bit) };
 
-    /* std::cout << "block " << block_idx << " set to " << after.data << " / " << binary(after.data) << "\n"; */
+
+    uint8_t const bit = uint8_t {1} << bit_idx;
+    uint8_t const after_data = on
+        ? before.data | bit
+        : before.data & ~bit;
+    Block const after { after_data };
 
     data[block_idx] = after;
 }

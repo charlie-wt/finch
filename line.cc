@@ -1,7 +1,7 @@
 #include "line.hh"
 
 
-void Line::draw (CharGrid &cg) const {
+void Line::draw (BrailleGrid &cg) const {
     // bresenham's
     auto const st = start.to_pixel();
     auto const nd = end.to_pixel();

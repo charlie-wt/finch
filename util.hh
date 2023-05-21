@@ -12,38 +12,25 @@
 #include <vector>
 
 
-void sleep (int ms) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}
+void sleep (int ms);
 
-std::string binary (uint8_t num) {
-    std::string res = "";
-
-    for (int i = 0; i < 8; i++) {
-        res += num % 2
-            ? '1'
-            : '0';
-        num >>= 1;
-    }
-
-    return {res.rbegin(), res.rend()};
-}
+std::string binary (uint8_t num);
 
 /* std::string pr (std::string const &str) { */
 /*     return "\"" + str + "\""; */
 /* } */
 
-std::string pr (std::string_view str) {
+inline std::string pr (std::string_view str) {
     std::string res = "\"";
     res += str;
     return res +"\"";
 }
 
-std::string pr (bool const b) {
+inline std::string pr (bool const b) {
     return b ? "true" : "false";
 }
 
-std::string pr (char const c) {
+inline std::string pr (char const c) {
     return std::string {'\'', c, '\''};
 }
 

@@ -11,7 +11,8 @@ int main () {
     Block b { 0b11011011 };
     wcout << "this is a test: " << b.to_char() << "\n";
 
-    CharGrid cg(TermInfo::detect());
+    /* CharGrid cg(TermInfo::detect()); */
+    BrailleGrid cg(TermInfo::detect());
 
     vector<Line> lines;
     lines.push_back({ { 0., 0. }, { 50., 5. } });
@@ -21,15 +22,24 @@ int main () {
 
     /* int count = 0; */
     /* while (true) { */
-    /*     cg.clear(); */
+        cg.clear();
 
-    /*     for (auto const &l : lines) { */
-    /*         l.draw(cg); */
-    /*     } */
+        for (auto const &l : lines) {
+            l.draw(cg);
+        }
 
-    /*     cg.draw(); */
+        cg.set({ 0, 0 });
+        cg.set({ 1, 1 });
+        cg.set({ 2, 2 });
+        cg.set({ 3, 3 });
+        cg.set({ 4, 4 });
+        cg.set({ 5, 5 });
+        cg.set({ 6, 6 });
+        cg.set({ 7, 7 });
+        cg.draw();
 
-    /*     sleep(100); */
-    /*     count++; */
+        sleep(100);
+        /* count++; */
     /* } */
+    cout << "\n";
 }

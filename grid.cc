@@ -7,6 +7,11 @@ void Pixel::draw (CharGrid &cg) const {
     cg.set(*this);
 }
 
+std::ostream &operator<< (std::ostream &os, Pixel p) {
+    os << "(" << p.x << ", " << p.y << ")";
+    return os;
+}
+
 CharGrid::CharGrid (TermInfo const &t)
     : w(t.w)
     , h(t.h)

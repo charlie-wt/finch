@@ -12,7 +12,8 @@ struct Pixel {
     int64_t x, y;
 };
 
-/* TODO #enhancement: logical resolution, braille. */
+std::ostream &operator<< (std::ostream &os, Pixel p);
+
 /* TODO #enhancement: z-buffers, etc. */
 struct CharGrid {
     CharGrid (TermInfo const &t);

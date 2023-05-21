@@ -1,10 +1,11 @@
 #pragma once
 
+#include "braille.hh"
 #include "grid.hh"
 #include "point.hh"
 
 
 struct Line {
     Point start, end;
-    void draw (CharGrid &cg) const;
+    void draw (BrailleGrid &cg) const;
 };

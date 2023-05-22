@@ -1,5 +1,4 @@
 #include "braille.hh"
-/* #include "util.hh" */
 
 #include <iostream>
 
@@ -21,7 +20,7 @@ wchar_t Block::to_char () const {
     return static_cast<wchar_t>(10240 + res);
 }
 
-BrailleGrid::BrailleGrid (TermInfo const &t)
+BrailleCanvas::BrailleCanvas (TermInfo const &t)
     : char_w(t.w)
     , char_h(t.h)
     , w(char_w * 2)
@@ -29,7 +28,7 @@ BrailleGrid::BrailleGrid (TermInfo const &t)
     , data(char_w * char_h, { 0 }) {
 }
 
-void BrailleGrid::set (Pixel p, bool on) {
+void BrailleCanvas::set (Pixel p, bool on) {
     Pixel const cell { p.x / 2, p.y / 4 };
     Pixel const inner { p.x % 2, p.y % 4 };
 
@@ -38,7 +37,6 @@ void BrailleGrid::set (Pixel p, bool on) {
     int64_t const block_idx = (cell.y * char_w) + cell.x;
 
     Block const before = data[block_idx];
-
 
     uint8_t const bit = uint8_t {1} << bit_idx;
     uint8_t const after_data = on
@@ -49,7 +47,7 @@ void BrailleGrid::set (Pixel p, bool on) {
     data[block_idx] = after;
 }
 
-void BrailleGrid::draw () const {
+void BrailleCanvas::draw () const {
     std::wstring str(data.size(), L'\u2800');
 
     for (int i = 0; i < data.size(); i++) {
@@ -59,6 +57,6 @@ void BrailleGrid::draw () const {
     std::wcout << "\r" << str << std::flush;
 }
 
-void BrailleGrid::clear () {
+void BrailleCanvas::clear () {
     data = std::vector<Block>(char_w * char_h, { 0 });
 }

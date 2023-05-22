@@ -1,6 +1,6 @@
 #pragma once
 
-#include "grid.hh"
+#include "point.hh"
 #include "term.hh"
 
 #include <string>
@@ -22,8 +22,8 @@ struct Block {
     uint8_t data;
 };
 
-struct BrailleGrid {
-    BrailleGrid (TermInfo const &t);
+struct BrailleCanvas {
+    BrailleCanvas (TermInfo const &t);
 
     void set (Pixel p, bool on = true);
     void draw () const;

@@ -6,8 +6,8 @@ using namespace std;
 
 
 int main () {
-    /* CharGrid cg(TermInfo::detect()); */
-    BrailleGrid cg(TermInfo::detect());
+    /* CharCanvas cg(TermInfo::detect()); */
+    BrailleCanvas cg(TermInfo::detect());
 
     vector<Line> lines;
     lines.push_back({ { 0., 0. }, { 50., 5. } });

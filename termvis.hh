@@ -1,7 +1,7 @@
 #pragma once
 
 #include "braille.hh"
-#include "grid.hh"
+#include "char.hh"
 #include "line.hh"
 #include "point.hh"
 #include "term.hh"

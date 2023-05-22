@@ -15,19 +15,19 @@ int main () {
     lines.push_back({ { 0., 0. }, { 20., 20. } });
     lines.push_back({ { 40., 20. }, { 10., 13. } });
 
-    int count = 0;
-    (void)count;
-    while (true) {
+    UpdateLoop(4, [&](double t,
+                      double dt,
+                      int64_t count) {
         cg.clear();
 
-        for (auto const &l : lines) {
+        lines[0].end.y += 4 * dt;
+        for (auto const &l : lines)
             l.draw(cg);
-        }
 
         cg.draw();
 
-        sleep(250);
-        count++;
-    }
+        return false;
+    }).start();
+
     cout << "\n";
 }

@@ -1,10 +1,6 @@
 #include "util.hh"
 
 
-void sleep (int ms) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}
-
 std::string binary (uint8_t num) {
     std::string res = "";
 

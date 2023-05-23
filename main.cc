@@ -24,6 +24,8 @@ int main () {
     lines.push_back({ { midx, midy - rad },
                       { midx, midy + rad } });
 
+    auto const sq = square(50) + Point3d { 30, 30 };
+
     UpdateLoop(4, [&](double t,
                       double dt,
                       int64_t count) {
@@ -41,6 +43,8 @@ int main () {
 
         for (auto const &l : lines)
             l.draw(c);
+
+        sq.draw(c);
 
         c.draw();
 

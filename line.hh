@@ -45,3 +45,23 @@ struct Line {
         }
     }
 };
+
+struct Line3d {
+    template<typename Canvas>
+    void draw (Canvas &canvas) const {
+        Line { start.perspective(),
+               end.perspective() }.draw(canvas);
+    }
+
+    Line3d& operator+= (Point3d offset);
+    Line3d& operator-= (Point3d offset);
+    Line3d& operator*= (double scale);
+    Line3d& operator/= (double scale);
+
+    Point3d start, end;
+};
+
+Line3d operator+ (Line3d l, Point3d offset);
+Line3d operator- (Line3d l, Point3d offset);
+Line3d operator* (Line3d l, double scale);
+Line3d operator/ (Line3d l, double scale);

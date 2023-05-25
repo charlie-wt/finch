@@ -18,6 +18,12 @@ int main () {
 
     auto const cb = cube(50) + Point3d { 30, 30, 0 };
 
+    auto const m = mat4::eye() * 2;
+    cout << m << "\n";
+    auto const m2 = matf<4, 2>::ones();
+    cout << m2 << "\n";
+    cout << m % m2 << "\n";
+
     UpdateLoop(4, [&](double t,
                       double dt,
                       int64_t count) {
@@ -38,7 +44,7 @@ int main () {
         c.draw();
 
         return false;
-    }).start();
+    });//.start();
 
     cout << "\n";
 }

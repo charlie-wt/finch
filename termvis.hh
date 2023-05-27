@@ -7,6 +7,7 @@
 #include "point.hh"
 #include "shape.hh"
 #include "term.hh"
+#include "text.hh"
 #include "time.hh"
 #include "util.hh"
 
@@ -21,6 +22,7 @@ inline void init () {
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
 }
 
 inline void teardown () {

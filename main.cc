@@ -10,14 +10,15 @@ int main () {
 
     BrailleCanvas c(TermInfo::detect());
 
-    auto cb = cube(50) + vec3 { 30, 30, 0 };
+    double len = 50;
+    auto cb = cube(len) + vec3 { -len/2, -len/2, 0 };
 
     UpdateLoop(60, [&](double t,
                        double dt,
                        int64_t count) {
         c.clear();
 
-        cb.rotate({ 0, 1, 1 }, 20 * dt);
+        cb.rotate({ 0.5, 1, 1 }, 45 * dt);
 
         cb.draw(c, 60, 80);
 

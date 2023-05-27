@@ -156,10 +156,10 @@ std::ostream &operator<< (std::ostream &os,
 template<size_t N>
 using vecf = vec<double, N>;
 
-using vec2 = vec<double, 2>;
+using vec2 = vecf<2>;
+using vec3 = vecf<3>;
+using vec4 = vecf<4>;
 using pixel = vec<int64_t, 2>;
-using vec3 = vec<double, 3>;
-using vec4 = vec<double, 4>;
 
 inline vec2 flatten (vec3 v)
     { return { v[0], v[1] }; }
@@ -304,9 +304,9 @@ std::ostream &operator<< (std::ostream &os,
 template<size_t R, size_t C>
 using matf = mat<double, R, C>;
 
-using mat2 = mat<double, 2, 2>;
-using mat3 = mat<double, 3, 3>;
-using mat4 = mat<double, 4, 4>;
+using mat2 = matf<2, 2>;
+using mat3 = matf<3, 3>;
+using mat4 = matf<4, 4>;
 
 inline mat3 rotation (vec3 axis, double degs) {
     auto const a = deg2rad(degs);
@@ -336,10 +336,8 @@ template<typename Canvas>
 vec3 projected (vec3 v, Canvas canvas,
                 double fov, double viewer_dist) {
     auto const factor = fov / (viewer_dist + v[2]);
-    v[0] *= factor;
-    v[1] *= factor;
-    /* v[0] =  v[0] * factor; */
-    /* v[1] = -v[1] * factor; */
+    v[0] =  v[0] * factor + 1 * canvas.w / 2;
+    v[1] = -v[1] * factor + 1 * canvas.h / 2;
     return v;
 }
 

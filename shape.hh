@@ -8,17 +8,13 @@
 struct Shape3d {
     template<typename Canvas>
     void draw (Canvas &canvas,
-               double fov, double viewer_dist) const {
+               double fov,
+               double viewer_dist) const {
         for (auto const &l : lines)
             l.draw(canvas, fov, viewer_dist);
     }
 
     void rotate (vec3 axis, double degs);
-
-    /* TODO #temp */
-    void rot_x (double degs);
-    void rot_y (double degs);
-    void rot_z (double degs);
 
     Shape3d& operator+= (vec3 offset);
     Shape3d& operator-= (vec3 offset);

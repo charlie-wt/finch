@@ -1,9 +1,16 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <utility>
 
+
+inline double deg2rad (double deg)
+    { return deg * (M_PI / 180.); }
+
+inline double rad2deg (double rad)
+    { return rad * (180. / M_PI); }
 
 template<typename T, size_t N>
 struct vec : std::array<T, N> {
@@ -20,60 +27,71 @@ struct vec : std::array<T, N> {
     static constexpr Vec ones ()
         { return full(1); }
 
+    T length () const {
+        T res = 0;
+        for (auto const v : *this)
+            res += v * v;
+        return std::sqrt(res);
+    }
+
+    void norm () {
+        *this /= this->length();
+    }
+
     template<typename S>
     T dot (vec<S, N> const &other) {
-        T res = this[0] * other[0];
+        T res = (*this)[0] * other[0];
         for (size_t i = 1; i < N; i++) {
-            res += this[i] * other[i];
+            res += (*this)[i] * other[i];
         }
         return res;
     }
 
     Vec& operator+= (T val) {
-        for (auto const &e : *this)
+        for (auto &e : *this)
             e += val;
         return *this;
     }
     template<typename S>
     Vec& operator+= (vec<S, N> const &other) {
         for (size_t i = 0; i < N; i++) {
-            this[i] += other[i];
+            (*this)[i] += other[i];
         }
         return *this;
     }
     Vec& operator-= (T val) {
-        for (auto const &e : *this)
+        for (auto &e : *this)
             e -= val;
         return *this;
     }
     template<typename S>
     Vec& operator-= (vec<S, N> const &other) {
         for (size_t i = 0; i < N; i++) {
-            this[i] -= other[i];
+            (*this)[i] -= other[i];
         }
         return *this;
     }
     Vec& operator*= (T val) {
-        for (auto const &e : *this)
+        for (auto &e : *this)
             e *= val;
         return *this;
     }
     template<typename S>
     Vec& operator*= (vec<S, N> const &other) {
         for (size_t i = 0; i < N; i++) {
-            this[i] *= other[i];
+            (*this)[i] *= other[i];
         }
         return *this;
     }
     Vec& operator/= (T val) {
-        for (auto const &e : *this)
+        for (auto &e : *this)
             e /= val;
         return *this;
     }
     template<typename S>
     Vec& operator/= (vec<S, N> const &other) {
         for (size_t i = 0; i < N; i++) {
-            this[i] /= other[i];
+            (*this)[i] /= other[i];
         }
         return *this;
     }
@@ -165,23 +183,9 @@ struct mat {
     static constexpr Mat eye () {
         auto res = zeros();
         size_t const smallest = R > C ? C : R;
-        /* TODO #verify: constexpr? */
+        /* TODO #enhancement: not actually constexpr */
         for (size_t i = 0; i < smallest; i++)
             res[i][i] = 1;
-        return res;
-    }
-
-    template<typename S, size_t C2>
-    mat<T, R, C2> operator% (mat<S, C, C2> const &other) const {
-        auto res = mat<T, R, C2>::zeros();
-        for (size_t r = 0; r < R; r++) {
-            for (size_t c = 0; c < C; c++) {
-                for (size_t c2 = 0; c2 < C2; c2++) {
-                    res[r][c2] +=
-                        data[r][c] * other[c][c2];
-                }
-            }
-        }
         return res;
     }
 
@@ -231,13 +235,46 @@ struct mat {
     Data data;
 };
 
+template<typename T, typename S,
+         size_t A, size_t B, size_t C>
+mat<T, A, C> operator% (mat<T, A, B> const &lhs,
+                        mat<S, B, C> const &rhs) {
+    auto res = mat<T, A, C>::zeros();
+    for (size_t a = 0; a < A; a++) {
+        for (size_t b = 0; b < B; b++) {
+            for (size_t c = 0; c < C; c++) {
+                res[a][c] +=
+                    lhs[a][b] * rhs[b][c];
+            }
+        }
+    }
+    return res;
+}
+
+template<typename T, typename S,
+         size_t A, size_t B>
+mat<T, 1, B> operator% (vec<T, A> const &lhs,
+                        mat<S, A, B> const &rhs) {
+    mat<T, 1, A> const lhs_m { { lhs } };
+    return lhs_m % rhs;
+}
+
+template<typename T, typename S,
+         size_t A, size_t B>
+vec<T, A> operator% (mat<S, A, B> const &lhs,
+                     vec<T, A> const &rhs) {
+    auto res = vec<T, A>::zeros();
+    for (size_t a = 0; a < A; a++) {
+        for (size_t b = 0; b < B; b++) {
+            res[a] += lhs[a][b] * rhs[a];
+        }
+    }
+    return res;
+}
+
 template<typename T, typename S, size_t R, size_t C>
 mat<T, R, C> operator+ (mat<T, R, C> m, S val)
     { m += val; return m; }
-/* template<typename T, typename S, size_t R, size_t C> */
-/* mat<T, R, C> operator+ (mat<T, R, C> m, */
-/*                         mat<S, R, C> const &other) */
-/*     { m += other; return m; } */
 template<typename T, typename S, size_t R, size_t C>
 mat<T, R, C> operator- (mat<T, R, C> m, S val)
     { m -= val; return m; }
@@ -267,3 +304,36 @@ using matf = mat<double, R, C>;
 using mat2 = mat<double, 2, 2>;
 using mat3 = mat<double, 3, 3>;
 using mat4 = mat<double, 4, 4>;
+
+inline mat3 rotation (vec3 axis, double degs) {
+    auto const a = deg2rad(degs);
+    auto const sa = sin(a);
+    auto const ca = cos(a);
+    auto const ica = 1 - ca;
+
+    axis.norm();
+    auto const ux = axis[0];
+    auto const uy = axis[1];
+    auto const uz = axis[2];
+
+    return { {
+        vec3 { ca + ux * ux * ica,
+               ux * uy * ica - uz * sa,
+               ux * uz * ica + uy * sa },
+        vec3 { uy * ux * ica + uz * sa,
+               ca + uy * uy * ica,
+               uy * uz * ica - ux * sa },
+        vec3 { uz * ux * ica - uy * sa,
+               uz * uy * ica + ux * sa,
+               ca + uz * uz * ica }
+    } };
+}
+
+template<typename Canvas>
+vec3 projected (vec3 v, Canvas canvas,
+                double fov, double viewer_dist) {
+    auto const factor = fov / (viewer_dist + v[2]);
+    v[0] *= factor;
+    v[1] *= factor;
+    return v;
+}

@@ -1,50 +1,41 @@
 #include "termvis.hh"
 
 #include <iostream>
+#include <locale.h>
+
+#include <ncursesw/ncurses.h>
 
 using namespace std;
 
 
 int main () {
+    setlocale(LC_ALL, "en_US.UTF-8");
+    initscr();
+    cbreak();
+    noecho();
+
     BrailleCanvas c(TermInfo::detect());
+    /* TermInfo const ti { COLS, LINES }; */
+    /* BrailleCanvas c(ti); */
 
-    vector<Line> lines;
+    auto cb = cube(50) + vec3 { 30, 30, 0 };
 
-    double const midx = c.w/2;
-    double const midy = c.h/2;
-    double const rad = 30.;
-    lines.push_back({ { midx, midy - rad },
-                      { midx, midy + rad } });
-
-    auto const cb = cube(50) + Point3d { 30, 30, 0 };
-
-    auto const m = mat4::eye() * 2;
-    cout << m << "\n";
-    auto const m2 = matf<4, 2>::ones();
-    cout << m2 << "\n";
-    cout << m % m2 << "\n";
-
-    UpdateLoop(4, [&](double t,
+    UpdateLoop(30, [&](double t,
                       double dt,
                       int64_t count) {
         c.clear();
 
-        double const xoff = rad * sin(t);
-        double const yoff = rad * cos(t);
-        lines[0].start.x = midx + xoff;
-        lines[0].end.x = midx - xoff;
-        lines[0].start.y = midy - yoff;
-        lines[0].end.y = midy + yoff;
+        /* cb.rotate({ 0, 1, 0 }, 5 * dt); */
+        cb.rot_x(10 * dt);
+        cb.rot_z(10 * dt);
 
-        for (auto const &l : lines)
-            l.draw(c);
-
-        cb.draw(c);
+        /* cb.draw(c); */
+        cb.project(c, 60, 80).draw(c);
 
         c.draw();
 
         return false;
-    });//.start();
+    }).start();
 
-    cout << "\n";
+    endwin();
 }

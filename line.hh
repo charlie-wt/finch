@@ -4,13 +4,13 @@
 
 
 struct Line {
-    Point start, end;
+    vec2 start, end;
 
     template<typename Canvas>
     void draw (Canvas &canvas) const {
         // bresenham's
-        auto const st = start.to_pixel();
-        auto const nd = end.to_pixel();
+        auto const st = Pixel::from_pt(start);
+        auto const nd = Pixel::from_pt(end);
 
         auto const dx = abs(nd.x - st.x);
         auto const dy = -abs(nd.y - st.y);
@@ -46,22 +46,35 @@ struct Line {
     }
 };
 
+std::ostream &operator<< (std::ostream &os,
+                          Line const &l);
+
 struct Line3d {
     template<typename Canvas>
     void draw (Canvas &canvas) const {
-        Line { start.perspective(),
-               end.perspective() }.draw(canvas);
+        vec2 st { start[0], start[1] };
+        vec2 nd { end[0], end[1] };
+        Line { st, nd }.draw(canvas);
     }
+    /* void draw (Canvas &canvas) const { */
+    /*     Line { projected(start), */
+    /*            projected(end) }.draw(canvas); */
+    /* } */
 
-    Line3d& operator+= (Point3d offset);
-    Line3d& operator-= (Point3d offset);
+    Line3d& operator+= (vec3 offset);
+    Line3d& operator-= (vec3 offset);
     Line3d& operator*= (double scale);
     Line3d& operator/= (double scale);
+    Line3d& operator%= (mat3 const &trans);
 
-    Point3d start, end;
+    vec3 start, end;
 };
 
-Line3d operator+ (Line3d l, Point3d offset);
-Line3d operator- (Line3d l, Point3d offset);
+Line3d operator+ (Line3d l, vec3 offset);
+Line3d operator- (Line3d l, vec3 offset);
 Line3d operator* (Line3d l, double scale);
 Line3d operator/ (Line3d l, double scale);
+Line3d operator% (mat3 const &trans, Line3d l);
+
+std::ostream &operator<< (std::ostream &os,
+                          Line3d const &l);

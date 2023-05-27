@@ -1,5 +1,7 @@
 #include "braille.hh"
 
+#include <ncursesw/ncurses.h>
+
 #include <iostream>
 
 
@@ -48,15 +50,31 @@ void BrailleCanvas::set (Pixel p, bool on) {
 }
 
 void BrailleCanvas::draw () const {
-    std::wstring str(data.size(), L'\u2800');
-
-    for (int i = 0; i < data.size(); i++) {
-        str[i] = data[i].to_char();
+    /* TODO #enhancement: diff the screen */
+    for (size_t i = 0; i < data.size(); i++) {
+        size_t const x = i % char_w;
+        size_t const y = floor(i / char_w);
+        const wchar_t s[2] { data[i].to_char(), 0 };
+        mvaddwstr(y, x, s);
     }
-
-    std::wcout << "\r" << str << std::flush;
+    ::refresh();
 }
 
 void BrailleCanvas::clear () {
     data = std::vector<Block>(char_w * char_h, { 0 });
+    ::clear();
 }
+
+/* void BrailleCanvas::draw () const { */
+/*     std::wstring str(data.size(), L'\u2800'); */
+
+/*     for (size_t i = 0; i < data.size(); i++) { */
+/*         str[i] = data[i].to_char(); */
+/*     } */
+
+/*     std::wcout << "\r" << str << std::flush; */
+/* } */
+
+/* void BrailleCanvas::clear () { */
+/*     data = std::vector<Block>(char_w * char_h, { 0 }); */
+/* } */

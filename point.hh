@@ -1,12 +1,23 @@
 #pragma once
 
+#include "geom.hh"
+
 #include <iostream>
+#include <type_traits>
 
 
 struct Pixel {
     template<typename Canvas>
     void draw (Canvas &canvas) const {
         canvas.set(*this);
+    }
+
+    template<typename T,
+             size_t N,
+             std::enable_if_t<N >= 2, bool> = true>
+    static constexpr Pixel from_pt (vec<T, N> p) {
+        return { static_cast<int64_t>(p[0]),
+                 static_cast<int64_t>(p[1]) };
     }
 
     int64_t x, y;

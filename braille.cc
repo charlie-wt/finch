@@ -62,19 +62,4 @@ void BrailleCanvas::draw () const {
 
 void BrailleCanvas::clear () {
     data = std::vector<Block>(char_w * char_h, { 0 });
-    ::clear();
 }
-
-/* void BrailleCanvas::draw () const { */
-/*     std::wstring str(data.size(), L'\u2800'); */
-
-/*     for (size_t i = 0; i < data.size(); i++) { */
-/*         str[i] = data[i].to_char(); */
-/*     } */
-
-/*     std::wcout << "\r" << str << std::flush; */
-/* } */
-
-/* void BrailleCanvas::clear () { */
-/*     data = std::vector<Block>(char_w * char_h, { 0 }); */
-/* } */

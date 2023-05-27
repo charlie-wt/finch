@@ -51,15 +51,24 @@ std::ostream &operator<< (std::ostream &os,
 
 struct Line3d {
     template<typename Canvas>
-    void draw (Canvas &canvas) const {
-        vec2 st { start[0], start[1] };
-        vec2 nd { end[0], end[1] };
-        Line { st, nd }.draw(canvas);
+    void draw (Canvas &canvas,
+               double fov, double viewer_dist) const {
+        project(canvas, fov, viewer_dist).draw(canvas);
     }
-    /* void draw (Canvas &canvas) const { */
-    /*     Line { projected(start), */
-    /*            projected(end) }.draw(canvas); */
-    /* } */
+
+    Line flatten () const {
+        return { ::flatten(start), ::flatten(end) };
+    }
+
+    template<typename Canvas>
+    Line project (Canvas &canvas,
+                  double fov,
+                  double viewer_dist) const {
+        return Line3d {
+            projected(start, canvas, fov, viewer_dist),
+            projected(end, canvas, fov, viewer_dist)
+        }.flatten();
+    }
 
     Line3d& operator+= (vec3 offset);
     Line3d& operator-= (vec3 offset);

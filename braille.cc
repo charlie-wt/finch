@@ -31,6 +31,8 @@ BrailleCanvas::BrailleCanvas (TermInfo const &t)
 }
 
 void BrailleCanvas::set (Pixel p, bool on) {
+    if (p.x < 0 || p.y < 0 || p.x > w || p.y > h)
+        return;
     Pixel const cell { p.x / 2, p.y / 4 };
     Pixel const inner { p.x % 2, p.y % 4 };
 
@@ -50,7 +52,6 @@ void BrailleCanvas::set (Pixel p, bool on) {
 }
 
 void BrailleCanvas::draw () const {
-    /* TODO #enhancement: diff the screen */
     for (size_t i = 0; i < data.size(); i++) {
         size_t const x = i % char_w;
         size_t const y = floor(i / char_w);

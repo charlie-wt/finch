@@ -161,6 +161,9 @@ using pixel = vec<int64_t, 2>;
 using vec3 = vec<double, 3>;
 using vec4 = vec<double, 4>;
 
+inline vec2 flatten (vec3 v)
+    { return { v[0], v[1] }; }
+
 template<typename T, size_t R, size_t C>
 struct mat {
     using Mat = mat<T, R, C>;
@@ -262,11 +265,11 @@ mat<T, 1, B> operator% (vec<T, A> const &lhs,
 template<typename T, typename S,
          size_t A, size_t B>
 vec<T, A> operator% (mat<S, A, B> const &lhs,
-                     vec<T, A> const &rhs) {
+                     vec<T, B> const &rhs) {
     auto res = vec<T, A>::zeros();
     for (size_t a = 0; a < A; a++) {
         for (size_t b = 0; b < B; b++) {
-            res[a] += lhs[a][b] * rhs[a];
+            res[a] += lhs[a][b] * rhs[b];
         }
     }
     return res;
@@ -335,5 +338,13 @@ vec3 projected (vec3 v, Canvas canvas,
     auto const factor = fov / (viewer_dist + v[2]);
     v[0] *= factor;
     v[1] *= factor;
+    /* v[0] =  v[0] * factor; */
+    /* v[1] = -v[1] * factor; */
     return v;
 }
+
+/* TODO #enhancement: replace line.hh with this? */
+template<typename T, size_t N>
+struct line {
+    vec<T, N> start, end;
+};

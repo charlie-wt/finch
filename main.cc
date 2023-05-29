@@ -11,8 +11,14 @@ int main () {
     BrailleCanvas c(TermInfo::detect());
     TextCanvas tc(TermInfo::detect());
 
-    double len = 50;
+    double const len = 50;
     auto cb = cube(len) + vec3 { -len/2, -len/2, 0 };
+
+    /* vec3 const v { 1, 2, 3 }; */
+    /* vec<int64_t, 3> const v { 1, 2, 3 }; */
+    /* vec<double, 2> const v { 1, 2 }; */
+    /* vec<int64_t, 2> const v { 1, 2 };  // broek */
+    /* cout << v << endl; */
 
     tc.write(10, 10, L"hello world.");
 

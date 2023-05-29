@@ -14,6 +14,9 @@ inline double rad2deg (double rad)
 
 template<typename T, size_t N>
 struct vec : std::array<T, N> {
+    using type = T;
+    inline static constexpr size_t size = N;
+
     using Vec = vec<T, N>;
 
     static constexpr Vec full (T val) {
@@ -38,7 +41,8 @@ struct vec : std::array<T, N> {
         *this /= this->length();
     }
 
-    template<typename S>
+    template<typename S,
+             std::enable_if_t<N != 0, bool> = true>
     T dot (vec<S, N> const &other) {
         T res = (*this)[0] * other[0];
         for (size_t i = 1; i < N; i++) {
@@ -46,6 +50,48 @@ struct vec : std::array<T, N> {
         }
         return res;
     }
+
+    template<typename S,
+             size_t M,
+             std::enable_if_t<N >= M, bool> = true>
+    vec<S, M> cast () const {
+        vec<S, M> res;
+        for (size_t i = 0; i < M; i++)
+            res[i] = static_cast<S>((*this)[i]);
+        return res;
+    }
+
+    template<typename Q>
+    Q to () const
+        { return cast<typename Q::type, Q::size>(); }
+
+    /* TODO #enhancement: make these simple
+     * members, not methods */
+    // need D simply because enable_if only works
+    // based on template params for the method,
+    // whereas the actual condition is only based
+    // on template params for the class. just use
+    // D for a simple `&& true` in the condition.
+    template<typename D = T,
+             std::enable_if_t<N >= 1 && std::is_same<D, T>::value, bool> = true>
+    T& x () { return (*this)[0]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 1 && std::is_same<D, T>::value, bool> = true>
+    T const & x () const { return (*this)[0]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 2 && std::is_same<D, T>::value, bool> = true>
+    T& y () { return (*this)[1]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 2 && std::is_same<D, T>::value, bool> = true>
+    T const & y () const { return (*this)[1]; }
+    T& z () { return (*this)[2]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 3 && std::is_same<D, T>::value, bool> = true>
+    T const & z () const { return (*this)[2]; }
+    T& w () { return (*this)[3]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 4 && std::is_same<D, T>::value, bool> = true>
+    T const & w () const { return (*this)[3]; }
 
     Vec& operator+= (T val) {
         for (auto &e : *this)
@@ -161,8 +207,15 @@ using vec3 = vecf<3>;
 using vec4 = vecf<4>;
 using pixel = vec<int64_t, 2>;
 
-inline vec2 flatten (vec3 v)
-    { return { v[0], v[1] }; }
+/* struct pixel : public vec<int64_t, 2> { */
+/*     template<typename T, */
+/*              size_t N, */
+/*              std::enable_if_t<N >= 2, bool> = true> */
+/*     static constexpr pixel from_pt (vec<T, N> p) { */
+/*         return { static_cast<int64_t>(p[0]), */
+/*                  static_cast<int64_t>(p[1]) }; */
+/*     } */
+/* }; */
 
 template<typename T, size_t R, size_t C>
 struct mat {
@@ -315,9 +368,9 @@ inline mat3 rotation (vec3 axis, double degs) {
     auto const ica = 1 - ca;
 
     axis.norm();
-    auto const ux = axis[0];
-    auto const uy = axis[1];
-    auto const uz = axis[2];
+    auto const ux = axis.x();
+    auto const uy = axis.y();
+    auto const uz = axis.z();
 
     return { {
         vec3 { ca + ux * ux * ica,
@@ -335,14 +388,8 @@ inline mat3 rotation (vec3 axis, double degs) {
 template<typename Canvas>
 vec3 projected (vec3 v, Canvas canvas,
                 double fov, double viewer_dist) {
-    auto const factor = fov / (viewer_dist + v[2]);
-    v[0] =  v[0] * factor + 1 * canvas.w / 2;
-    v[1] = -v[1] * factor + 1 * canvas.h / 2;
+    auto const factor = fov / (viewer_dist + v.z());
+    v.x() =  v.x() * factor + 1 * canvas.w / 2;
+    v.y() = -v.y() * factor + 1 * canvas.h / 2;
     return v;
 }
-
-/* TODO #enhancement: replace line.hh with this? */
-template<typename T, size_t N>
-struct line {
-    vec<T, N> start, end;
-};

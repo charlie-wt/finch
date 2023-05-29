@@ -8,8 +8,8 @@ CharCanvas::CharCanvas (TermInfo const &t)
     , h(t.h)
     , data(w * h, ' ') {}
 
-void CharCanvas::set (Pixel p, char c) {
-    data[(p.y * w) + p.x] = c;
+void CharCanvas::set (pixel p, char c) {
+    data[(p.y() * w) + p.x()] = c;
 }
 
 void CharCanvas::draw () const {

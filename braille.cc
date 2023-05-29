@@ -30,15 +30,15 @@ BrailleCanvas::BrailleCanvas (TermInfo const &t)
     , data(char_w * char_h, { 0 }) {
 }
 
-void BrailleCanvas::set (Pixel p, bool on) {
-    if (p.x < 0 || p.y < 0 || p.x > w || p.y > h)
+void BrailleCanvas::set (pixel p, bool on) {
+    if (p.x() < 0 || p.y() < 0 || p.x() > w || p.y() > h)
         return;
-    Pixel const cell { p.x / 2, p.y / 4 };
-    Pixel const inner { p.x % 2, p.y % 4 };
+    pixel const cell { p.x() / 2, p.y() / 4 };
+    pixel const inner { p.x() % 2, p.y() % 4 };
 
-    uint8_t const bit_idx = inner.y + 4 * inner.x;
+    uint8_t const bit_idx = inner.y() + 4 * inner.x();
 
-    int64_t const block_idx = (cell.y * char_w) + cell.x;
+    int64_t const block_idx = (cell.y() * char_w) + cell.x();
 
     Block const before = data[block_idx];
 

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "point.hh"
+#include "geom.hh"
 #include "term.hh"
 #include <string>
 
 
-std::ostream &operator<< (std::ostream &os, Pixel p);
+std::ostream &operator<< (std::ostream &os, pixel p);
 
 /* TODO #enhancement: z-buffers, etc. */
 struct CharCanvas {
     CharCanvas (TermInfo const &t);
 
-    void set (Pixel p, char c = '*');
+    void set (pixel p, char c = '*');
     void draw () const;
     void clear ();
 

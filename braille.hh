@@ -1,6 +1,6 @@
 #pragma once
 
-#include "point.hh"
+#include "geom.hh"
 #include "term.hh"
 
 #include <string>
@@ -25,7 +25,7 @@ struct Block {
 struct BrailleCanvas {
     BrailleCanvas (TermInfo const &t);
 
-    void set (Pixel p, bool on = true);
+    void set (pixel p, bool on = true);
     void draw () const;
     void clear ();
 

@@ -49,7 +49,7 @@ std::string pr (T const t) {
 
 template<std::size_t I = 0, typename... Tp>
 inline typename std::enable_if<I == sizeof...(Tp), std::string>::type
-pr (std::tuple<Tp...> const &t) {
+pr (std::tuple<Tp...> const &) {
     if constexpr (sizeof... (Tp) == 0)
         return "()";
     return "";

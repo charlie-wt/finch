@@ -25,6 +25,8 @@ int main () {
     UpdateLoop(60, [&](double t,
                        double dt,
                        int64_t count) {
+        (void)t; (void)count;
+
         c.clear();
 
         cb.rotate({ 0.5, 1, 1 }, 45 * dt);

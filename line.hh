@@ -6,6 +6,11 @@
 struct Line {
     vec2 start, end;
 
+    /* TODO #enhancement: for (wireframe) meshes,
+     * this will be called a lot on pairs of
+     * vec3s; if the body of this is separated
+     * out, it could be called without having to
+     * copy data to construct many Line3ds. */
     template<typename Canvas>
     void draw (Canvas &canvas) const {
         // bresenham's
@@ -52,8 +57,8 @@ std::ostream &operator<< (std::ostream &os,
 struct Line3d {
     template<typename Canvas>
     void draw (Canvas &canvas,
-               double fov, double viewer_dist) const {
-        project(canvas, fov, viewer_dist).draw(canvas);
+               Cam const &cam) const {
+        project(canvas, cam).draw(canvas);
     }
 
     Line flatten () const {
@@ -62,11 +67,10 @@ struct Line3d {
 
     template<typename Canvas>
     Line project (Canvas &canvas,
-                  double fov,
-                  double viewer_dist) const {
+                  Cam const &cam) const {
         return Line3d {
-            projected(start, canvas, fov, viewer_dist),
-            projected(end, canvas, fov, viewer_dist)
+            projected(start, canvas, cam),
+            projected(end, canvas, cam)
         }.flatten();
     }
 

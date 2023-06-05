@@ -14,6 +14,12 @@ int main () {
     double const len = 50;
     auto cb = cube(len) + vec3 { 0, 0, 10 };
 
+    Mesh const tr { { Tri { vec3 { -25, -25, 0 },
+                            vec3 {   0,  25, 0 },
+                            vec3 {  25, -25, 0 } } } };
+
+    Cam const cam { 60, 80 };
+
     /* vec3 const v { 1, 2, 3 }; */
     /* vec<int64_t, 3> const v { 1, 2, 3 }; */
     /* vec<double, 2> const v { 1, 2 }; */
@@ -29,11 +35,11 @@ int main () {
 
         c.clear();
 
-        cb.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
+        /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
+        /* cb.draw(c, cam); */
 
-        cb.origin.y() = sin(0.5 * t * M_PI) * 10.;
-
-        cb.draw(c, 60, 80);
+        tr.draw(c, cam, DrawMode::LINE);
 
         c.draw();
         tc.draw();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "camera.hh"
+
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -386,9 +388,9 @@ inline mat3 rotation (vec3 axis, double degs) {
 }
 
 template<typename Canvas>
-vec3 projected (vec3 v, Canvas canvas,
-                double fov, double viewer_dist) {
-    auto const factor = fov / (viewer_dist + v.z());
+vec3 projected (vec3 v, Canvas &canvas,
+                Cam const &cam) {
+    auto const factor = cam.fov_degs / (cam.dist + v.z());
     v.x() =  v.x() * factor + 1 * canvas.w / 2;
     v.y() = -v.y() * factor + 1 * canvas.h / 2;
     return v;

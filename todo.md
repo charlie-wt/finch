@@ -1,7 +1,8 @@
 * [~] x, y, z aliases for vec storage access
 * [x] do origins more properly
-* [ ] filled-shading
-    * [ ] triangle primitive
+* [ ] line clipping?
+* [~] filled-shading
+    * [x] triangle primitive
     * [ ] wavefront-style representation
     * [ ] shading (prob via dithering)
     * [ ] z-buffer
@@ -14,7 +15,7 @@
     * (mostly just to try out, and make any necessary
       conveniences)
     * simple fluid sim?
-* [ ] movable camera
+* [~] movable camera
 * [ ] particles?
 * [x] proper makefile
 * [ ] put on github/lab

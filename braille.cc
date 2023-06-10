@@ -31,7 +31,8 @@ BrailleCanvas::BrailleCanvas (TermInfo const &t)
 }
 
 void BrailleCanvas::set (pixel p, bool on) {
-    if (p.x() < 0 || p.y() < 0 || p.x() > w || p.y() > h)
+    if (p.x() < 0 || p.y() < 0 ||
+        p.x() >= w || p.y() >= h)
         return;
     pixel const cell { p.x() / 2, p.y() / 4 };
     pixel const inner { p.x() % 2, p.y() % 4 };

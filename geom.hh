@@ -209,6 +209,8 @@ using vec3 = vecf<3>;
 using vec4 = vecf<4>;
 using pixel = vec<int64_t, 2>;
 
+/* TODO #bug: having this instead of the type
+ *            alias lets you `cout` a pixel */
 /* struct pixel : public vec<int64_t, 2> { */
 /*     template<typename T, */
 /*              size_t N, */

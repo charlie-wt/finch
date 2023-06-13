@@ -6,6 +6,14 @@
 
 
 struct Shape {
+    static Shape rect (double width,
+                       double height);
+    static Shape square (double length);
+    static Shape box (double width,
+                      double height,
+                      double depth);
+    static Shape cube (double length);
+
     template<typename Canvas>
     void draw (Canvas &canvas,
                Cam const &cam) const {
@@ -33,10 +41,3 @@ Shape offset (Shape s, vec3 change);
 
 Shape operator+ (Shape s, vec3 offset);
 Shape operator- (Shape s, vec3 offset);
-
-Shape rect (double width, double height);
-Shape square (double length);
-Shape box (double width,
-           double height,
-           double depth);
-Shape cube (double length);

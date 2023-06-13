@@ -11,13 +11,9 @@ int main () {
     BrailleCanvas c(TermInfo::detect());
     TextCanvas tc(TermInfo::detect());
 
-    double const len = 50;
-    auto cb = cube(len) + vec3 { 0, 0, 10 };
+    auto cb = Shape::cube(50) + vec3 { 0, 0, 10 };
 
-    Mesh tr { { Tri { vec3 { -25, -25, 0 },
-                      vec3 {   0,  25, 0 },
-                      vec3 {  25, -25, 0 } } },
-              vec3 { 0, 0, 0 } };
+    auto obj = Mesh::cube(25);
 
     Cam const cam { 60, 80 };
     (void) cam;
@@ -43,9 +39,9 @@ int main () {
         cb.origin.y() = sin(0.5 * t * M_PI) * 10.;
         cb.draw(c, cam);
 
-        tr.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        tr.origin.y() = sin(0.5 * t * M_PI) * -10.;
-        tr.draw(c, cam, DrawMode::FILL);
+        obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        obj.origin.y() = sin(0.5 * t * M_PI) * 10.;
+        obj.draw(c, cam, DrawMode::FILL);
 
         c.draw();
         tc.draw();

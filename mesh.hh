@@ -7,6 +7,16 @@
 
 
 struct Mesh {
+    static Mesh from_verts (
+        std::vector<vec3> const &verts);
+    static Mesh from_tris (
+        std::vector<Tri> const &tris);
+
+    static Mesh box(double width,
+                    double height,
+                    double depth);
+    static Mesh cube(double length);
+
     template <typename Canvas>
     void draw (Canvas &canvas, Cam const &cam,
                DrawMode mode) const {
@@ -14,25 +24,29 @@ struct Mesh {
         case DrawMode::FILL:
             draw_fill(canvas, cam); break;
         case DrawMode::LINE:
-            draw_lines(canvas, cam); break;
+            draw_line(canvas, cam); break;
         }
     }
 
     template <typename Canvas>
     void draw_fill (Canvas &canvas,
                     Cam const &cam) const {
-        for (auto t : tris) {
-            t += origin;
+        for (auto const &idx : idxs) {
+            Tri const t { verts[idx[0]] + origin,
+                          verts[idx[1]] + origin,
+                          verts[idx[2]] + origin };
             t.draw_fill(canvas, cam);
         }
     }
 
     template <typename Canvas>
-    void draw_lines (Canvas &canvas,
-                     Cam const &cam) const {
-        for (auto t : tris) {
-            t += origin;
-            t.draw_lines(canvas, cam);
+    void draw_line (Canvas &canvas,
+                    Cam const &cam) const {
+        for (auto const &idx : idxs) {
+            Tri const t { verts[idx[0]] + origin,
+                          verts[idx[1]] + origin,
+                          verts[idx[2]] + origin };
+            t.draw_line(canvas, cam);
         }
     }
 
@@ -46,7 +60,9 @@ struct Mesh {
     Mesh& operator+= (vec3 change);
     Mesh& operator-= (vec3 change);
 
-    std::vector<Tri> tris;
+    std::vector<vec3> verts;
+    std::vector<vec3> norms;
+    std::vector<vec3i> idxs;
     vec3 origin;
 };
 

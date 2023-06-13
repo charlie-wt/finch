@@ -90,11 +90,11 @@ std::string pr (std::vector<T> const &vec) {
 namespace detail {
 
 template<typename T>
-struct is_maybe_ordered_map { static constexpr bool value = false; };
+struct is_maybe_ordered_map : std::false_type {};
 template<typename K, typename V>
-struct is_maybe_ordered_map<std::map<K, V>> { static constexpr bool value = true; };
+struct is_maybe_ordered_map<std::map<K, V>> : std::true_type {};
 template<typename K, typename V>
-struct is_maybe_ordered_map<std::unordered_map<K, V>> { static constexpr bool value = true; };
+struct is_maybe_ordered_map<std::unordered_map<K, V>> : std::true_type {};
 
 }
 

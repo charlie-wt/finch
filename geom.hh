@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <utility>
 
 
@@ -201,17 +202,31 @@ std::ostream &operator<< (std::ostream &os,
     return os;
 }
 
+template<typename T, size_t N>
+std::string pr (vec<T, N> const &v) {
+    std::stringstream ss;
+    ss << v;
+    return ss.str();
+}
+
 template<size_t N>
 using vecf = vec<double, N>;
 
-using vec2 = vecf<2>;
-using vec3 = vecf<3>;
-using vec4 = vecf<4>;
+using vec2f = vecf<2>;
+using vec3f = vecf<3>;
+using vec4f = vecf<4>;
 
 template<size_t N>
 using veci = vec<int64_t, N>;
 
-using pixel = veci<2>;
+using vec2i = veci<2>;
+using vec3i = veci<3>;
+using vec4i = veci<4>;
+
+using vec2 = vec2f;
+using vec3 = vec3f;
+using vec4 = vec4f;
+using pixel = vec2i;
 
 /* TODO #bug: having this instead of the type
  *            alias lets you `cout` a pixel, but

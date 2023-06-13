@@ -1,4 +1,4 @@
-# choose these bits ####################################################################
+# choose these bits ##############################
 
 # basic options
 CXX=g++
@@ -13,14 +13,14 @@ LIB_NAMES=ncursesw
 # debug-mode options
 DEBUG_FLAGS=-g3 -DDEBUG
 DEBUG_BUILD_DIR=.debug
-DEBUG_EXE=termvis
+DEBUG_EXE=finch
 
 # release-mode options
 RELEASE_FLAGS=-O3
 RELEASE_BUILD_DIR=.release
-RELEASE_EXE=$(addprefix $(RELEASE_BUILD_DIR)/, termvis)
+RELEASE_EXE=$(addprefix $(RELEASE_BUILD_DIR)/, finch)
 
-# ignore the rest ######################################################################
+# ignore the rest ################################
 
 
 

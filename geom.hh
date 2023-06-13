@@ -207,10 +207,16 @@ using vecf = vec<double, N>;
 using vec2 = vecf<2>;
 using vec3 = vecf<3>;
 using vec4 = vecf<4>;
-using pixel = vec<int64_t, 2>;
+
+template<size_t N>
+using veci = vec<int64_t, N>;
+
+using pixel = veci<2>;
 
 /* TODO #bug: having this instead of the type
- *            alias lets you `cout` a pixel */
+ *            alias lets you `cout` a pixel, but
+ *            when it's a type alias you get
+ *            'undefined symbol' */
 /* struct pixel : public vec<int64_t, 2> { */
 /*     template<typename T, */
 /*              size_t N, */
@@ -389,11 +395,28 @@ inline mat3 rotation (vec3 axis, double degs) {
     } };
 }
 
-template<typename Canvas>
-vec3 projected (vec3 v, Canvas &canvas,
-                Cam const &cam) {
-    auto const factor = cam.fov_degs / (cam.dist + v.z());
-    v.x() =  v.x() * factor + 1 * canvas.w / 2;
-    v.y() = -v.y() * factor + 1 * canvas.h / 2;
+// turn world-space coord ((0, 0) is centre of
+// screen, +y is up) to screen-space ((0, 0) is
+// top-left, +y is down)
+template<typename Canvas,
+         typename T,
+         size_t N, std::enable_if_t<N >= 2, bool> = true>
+vec<T, N> screen (vec<T, N> v,
+                  Canvas const &canvas) {
+    v.x() =  v.x() + canvas.w / 2;
+    v.y() = -v.y() + canvas.h / 2;
     return v;
+}
+
+// perspective projection
+inline vec3 perspective (vec3 v, Cam const &cam) {
+    return v * cam.fov_degs / (cam.dist + v.z());
+}
+
+// perspective projection, & convert to
+// screen-space.
+template<typename Canvas>
+vec3 projected (vec3 v, Canvas const &canvas,
+                Cam const &cam) {
+    return screen(perspective(v, cam), canvas);
 }

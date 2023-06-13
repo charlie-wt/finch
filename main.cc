@@ -1,4 +1,4 @@
-#include "termvis.hh"
+#include "finch.hh"
 
 #include <iostream>
 
@@ -26,6 +26,8 @@ int main () {
     /* vec<int64_t, 3> const v { 1, 2, 3 }; */
     /* vec<double, 2> const v { 1, 2 }; */
     /* vec<int64_t, 2> const v { 1, 2 };  // broek */
+    /* vec<int64_t, 2> const v { 1, 2 };  // broek */
+    /* pixel const v { 1, 2 };  // broek */
     /* cout << v << endl; */
 
     tc.write(1, 1, L"hello world.");

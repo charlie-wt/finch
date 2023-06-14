@@ -5,8 +5,6 @@
 #include <string>
 
 
-std::ostream &operator<< (std::ostream &os, pixel p);
-
 /* TODO #enhancement: z-buffers, etc. */
 struct CharCanvas {
     CharCanvas (TermInfo const &t);

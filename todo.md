@@ -3,9 +3,10 @@
 * [ ] line clipping?
 * [~] filled-shading
     * [x] triangle primitive
-    * [ ] wavefront-style representation
-    * [ ] shading (prob via dithering)
+    * [x] wavefront-style representation
     * [ ] z-buffer
+    * [ ] shading (prob via dithering)
+    * [ ] back-face culling?
 * [ ] reconcile `BrailleCanvas` & `CharCanvas`
     * [ ] prob make braille some kind of filter? may
           affect dithering, too

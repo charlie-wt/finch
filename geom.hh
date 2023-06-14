@@ -228,20 +228,6 @@ using vec3 = vec3f;
 using vec4 = vec4f;
 using pixel = vec2i;
 
-/* TODO #bug: having this instead of the type
- *            alias lets you `cout` a pixel, but
- *            when it's a type alias you get
- *            'undefined symbol' */
-/* struct pixel : public vec<int64_t, 2> { */
-/*     template<typename T, */
-/*              size_t N, */
-/*              std::enable_if_t<N >= 2, bool> = true> */
-/*     static constexpr pixel from_pt (vec<T, N> p) { */
-/*         return { static_cast<int64_t>(p[0]), */
-/*                  static_cast<int64_t>(p[1]) }; */
-/*     } */
-/* }; */
-
 template<typename T, size_t R, size_t C>
 struct mat {
     using Mat = mat<T, R, C>;

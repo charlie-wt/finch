@@ -9,6 +9,9 @@ CharCanvas::CharCanvas (TermInfo const &t)
     , data(w * h, ' ') {}
 
 void CharCanvas::set (pixel p, char c) {
+    if (p.x() < 0 || p.y() < 0 ||
+        p.x() >= w || p.y() >= h)
+        return;
     data[(p.y() * w) + p.x()] = c;
 }
 

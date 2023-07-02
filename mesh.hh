@@ -32,10 +32,10 @@ struct Mesh {
     void draw_fill (Canvas &canvas,
                     Cam const &cam) const {
         for (auto const &idx : idxs) {
-            Tri const t { verts[idx[0]] + origin,
-                          verts[idx[1]] + origin,
-                          verts[idx[2]] + origin };
-            t.draw_fill(canvas, cam);
+            draw_tri({ verts[idx[0]] + origin,
+                       verts[idx[1]] + origin,
+                       verts[idx[2]] + origin },
+                       canvas, cam);
         }
     }
 

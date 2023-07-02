@@ -9,11 +9,25 @@ int main () {
     init();
 
     BrailleCanvas c(TermInfo::detect());
+    /* CharCanvas c(TermInfo::detect()); */
     TextCanvas tc(TermInfo::detect());
 
-    auto cb = Shape::cube(50) + vec3 { 0, 0, 10 };
+    auto cb = Shape::cube(c.h * 0.5);
 
-    auto obj = Mesh::cube(25);
+    auto obj = Mesh::cube(c.h * 0.4);
+
+    /* double const w = c.w * 0.5; */
+    /* double const h = c.h * 0.5; */
+    /* auto obj = Mesh { */
+    /*     { vec3 { -w/2, -h/2, 0 }, */
+    /*       vec3 {    0,  h/2, 0 }, */
+    /*       vec3 {  w/2, -h/2, 0 } }, */
+    /*     { }, */
+    /*     { vec3i { 0, 1, 2 } }, */
+    /*     vec3 { 0, 0, 0 } */
+    /* }; */
+    /* obj.rotate({ 0, 0, 1 }, 90); */
+    /* obj.rotate({ 0, 1, 0 }, -89); */
 
     Cam const cam { 60, 80 };
     (void) cam;

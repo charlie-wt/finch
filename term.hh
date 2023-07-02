@@ -1,7 +1,10 @@
 #pragma once
 
+#include <cstdint>
+
+
 struct TermInfo {
     static TermInfo detect();
 
-    int w, h;
+    int64_t w, h;
 };

@@ -2,6 +2,7 @@
 
 #include <ncursesw/ncurses.h>
 
+#include <algorithm>
 #include <iostream>
 
 
@@ -27,19 +28,26 @@ BrailleCanvas::BrailleCanvas (TermInfo const &t)
     , char_h(t.h)
     , w(char_w * 2)
     , h(char_h * 4)
-    , data(char_w * char_h, { 0 }) {
-}
+    , data(char_w * char_h, { 0 })
+    , depth_buf(TermInfo {w, h}) { }
 
-void BrailleCanvas::set (pixel p, bool on) {
+void BrailleCanvas::set (pixel p,
+                         double depth,
+                         bool on) {
     if (p.x() < 0 || p.y() < 0 ||
         p.x() >= w || p.y() >= h)
         return;
+
+    if (!depth_buf.set(p, depth))
+        return;
+
     pixel const cell { p.x() / 2, p.y() / 4 };
     pixel const inner { p.x() % 2, p.y() % 4 };
 
     uint8_t const bit_idx = inner.y() + 4 * inner.x();
 
-    int64_t const block_idx = (cell.y() * char_w) + cell.x();
+    int64_t const block_idx =
+        (cell.y() * char_w) + cell.x();
 
     Block const before = data[block_idx];
 
@@ -63,5 +71,6 @@ void BrailleCanvas::draw () const {
 }
 
 void BrailleCanvas::clear () {
-    data = std::vector<Block>(char_w * char_h, { 0 });
+    std::fill(data.begin(), data.end(), Block { 0 });
+    depth_buf.clear();
 }

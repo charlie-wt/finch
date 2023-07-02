@@ -1,5 +1,6 @@
 #pragma once
 
+#include "depth.hh"
 #include "geom.hh"
 #include "term.hh"
 
@@ -25,11 +26,14 @@ struct Block {
 struct BrailleCanvas {
     BrailleCanvas (TermInfo const &t);
 
-    void set (pixel p, bool on = true);
+    void set (pixel p,
+              double depth = 0,
+              bool on = true);
     void draw () const;
     void clear ();
 
     int64_t char_w, char_h;
     int64_t w, h; // in braille dots
     std::vector<Block> data;
+    DepthBuffer depth_buf;
 };

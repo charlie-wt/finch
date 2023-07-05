@@ -111,3 +111,54 @@ void draw_tri (std::array<vec3, 3> verts,
         }
     }
 }
+
+template<typename Canvas>
+void draw_line (vec3 start, vec3 end,
+                Canvas &canvas, Cam const &cam) {
+    vec3 const sproj = projected(start, canvas, cam);
+    vec3 const eproj = projected(end, canvas, cam);
+
+    // bresenham's
+    auto const st = sproj.to<pixel>();
+    auto const nd = eproj.to<pixel>();
+
+    auto const dx = abs(nd.x() - st.x());
+    auto const dy = -abs(nd.y() - st.y());
+    auto const xinc = st.x() < nd.x() ? 1 : -1;
+    auto const yinc = st.y() < nd.y() ? 1 : -1;
+
+    auto error = dx + dy;
+
+    double const dz = end.z() - start.z();
+    double const zstp = dx == 0
+        ? 0
+        : dz / (nd.x() - st.x());
+
+    auto x = st.x();
+    auto y = st.y();
+    while (true) {
+        /* TODO #correctness: x is discretised */
+        double const z = start.z() +
+            (x - st.x()) * zstp;
+        canvas.set({ x, y }, z);
+
+        if (x == nd.x() && y == nd.y())
+            break;
+
+        auto const error2 = 2 * error;
+
+        if (error2 >= dy) {
+            if (x == nd.x())
+                break;
+            error += dy;
+            x += xinc;
+        }
+
+        if (error2 <= dx) {
+            if (y == nd.y())
+                break;
+            error += dx;
+            y += yinc;
+        }
+    }
+}

@@ -46,7 +46,12 @@ struct Mesh {
             Tri const t { verts[idx[0]] + origin,
                           verts[idx[1]] + origin,
                           verts[idx[2]] + origin };
-            t.draw_line(canvas, cam);
+            ::draw_line(t.verts[0], t.verts[1],
+                        canvas, cam);
+            ::draw_line(t.verts[1], t.verts[2],
+                        canvas, cam);
+            ::draw_line(t.verts[2], t.verts[0],
+                        canvas, cam);
         }
     }
 

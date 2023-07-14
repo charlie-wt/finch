@@ -30,6 +30,10 @@ struct TextCanvas {
         return text.back();
     }
 
+    void clear () {
+        text.clear();
+    }
+
     void draw () const {
         for (auto const &str : text)
             mvaddwstr(str.y, str.x, str.data.data());

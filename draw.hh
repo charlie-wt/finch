@@ -12,9 +12,9 @@ enum class DrawMode {
 
 
 template <typename Canvas>
-void draw_tri (std::array<vec3, 3> verts,
-               Canvas &canvas,
-               Cam const &cam) {
+void draw_fill (std::array<vec3, 3> verts,
+                Canvas &canvas,
+                Cam const &cam) {
     // project
     std::array<vec3, 3> proj;
     std::transform(verts.begin(), verts.end(),
@@ -113,6 +113,46 @@ void draw_tri (std::array<vec3, 3> verts,
 }
 
 template<typename Canvas>
+void draw (vec2 start, vec2 end,
+           Canvas &canvas) {
+    // bresenham's
+    auto const st = start.to<pixel>();
+    auto const nd = end.to<pixel>();
+
+    auto const dx = abs(nd.x() - st.x());
+    auto const dy = -abs(nd.y() - st.y());
+    auto const xinc = st.x() < nd.x() ? 1 : -1;
+    auto const yinc = st.y() < nd.y() ? 1 : -1;
+
+    auto error = dx + dy;
+
+    auto x = st.x();
+    auto y = st.y();
+    while (true) {
+        canvas.set({ x, y });
+
+        if (x == nd.x() && y == nd.y())
+            break;
+
+        auto const error2 = 2 * error;
+
+        if (error2 >= dy) {
+            if (x == nd.x())
+                break;
+            error += dy;
+            x += xinc;
+        }
+
+        if (error2 <= dx) {
+            if (y == nd.y())
+                break;
+            error += dx;
+            y += yinc;
+        }
+    }
+}
+
+template<typename Canvas>
 void draw_line (vec3 start, vec3 end,
                 Canvas &canvas, Cam const &cam) {
     vec3 const sproj = projected(start, canvas, cam);
@@ -161,4 +201,13 @@ void draw_line (vec3 start, vec3 end,
             y += yinc;
         }
     }
+}
+
+template <typename Canvas>
+void draw_line (std::array<vec3, 3> verts,
+                Canvas &canvas,
+                Cam const &cam) {
+    draw_line(verts[0], verts[1], canvas, cam);
+    draw_line(verts[1], verts[2], canvas, cam);
+    draw_line(verts[2], verts[0], canvas, cam);
 }

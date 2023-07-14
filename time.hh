@@ -14,17 +14,41 @@ inline Time now () {
     return std::chrono::system_clock::now();
 }
 
+using Duration = std::chrono::duration<double>;
+
 // tiny helper, just to return the duration as a
 // double (since by default it's an int).
-inline std::chrono::duration<double> since (Time bef, Time aft) {
+inline Duration since (Time bef, Time aft) {
     return aft - bef;
 }
+
+// tiny helper, just to return the duration as a
+// double (since by default it's an int).
+inline Duration since (Time bef) {
+    return since(bef, now());
+}
+
+struct LoopState {
+    double avg_effective_fps () const {
+        return 1. / avg_frametime.count();
+    }
+
+    std::wstring speed_report () const {
+        int64_t const fps = avg_effective_fps();
+        return std::to_wstring(fps) +
+               L" / " +
+               std::to_wstring(avg_frametime.count());
+    }
+
+    Duration avg_frametime;
+};
 
 // Note: the function given to this struct should
 // take three params:
 // * double t (total time elapsed)
 // * double dt (time elapsed since last update)
 // * int64_t count (number of updates elapsed)
+// * LoopState const &
 // ...and return a boolean of whether the looping
 // should now stop.
 template<typename Fn>
@@ -34,7 +58,8 @@ struct UpdateLoop {
         , count(0)
         , t_start()
         , t_prev()
-        , body(fn) {}
+        , body(fn)
+        , state() {}
 
     void start () {
         count = 0;
@@ -44,7 +69,7 @@ struct UpdateLoop {
 
         while (true) {
             if (count > 0 &&
-                since(t_prev, now()).count() < spf)
+                since(t_prev).count() < spf)
                 continue;
 
             auto const this_t = now();
@@ -52,20 +77,27 @@ struct UpdateLoop {
             bool const should_stop = body(
                 since(t_start, this_t).count(),
                 since(t_prev, this_t).count(),
-                count);
+                count, state);
+
+            count++;
+
+            state.avg_frametime *= count - 1;
+            state.avg_frametime += since(this_t);
+            state.avg_frametime /= count;
 
             if (should_stop)
                 break;
 
             t_prev = now();
-            count++;
         }
     }
 
     double fps;
-    int64_t count;
+    uint64_t count;
     Time t_start;
     Time t_prev;
 
     Fn body;
+
+    LoopState state;
 };

@@ -7,7 +7,6 @@
 #include <string>
 
 
-/* TODO #enhancement: z-buffers, etc. */
 struct CharCanvas {
     CharCanvas (TermInfo const &t);
 

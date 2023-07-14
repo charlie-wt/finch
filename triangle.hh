@@ -83,9 +83,7 @@ struct Tri {
     template <typename Canvas>
     void draw_line (Canvas &canvas,
                     Cam const &cam) const {
-        Line3d { verts[0], verts[1] }.draw(canvas, cam);
-        Line3d { verts[1], verts[2] }.draw(canvas, cam);
-        Line3d { verts[2], verts[0] }.draw(canvas, cam);
+        ::draw_line(verts, canvas, cam);
     }
 
     Tri& operator+= (vec3 offset);

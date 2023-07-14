@@ -32,10 +32,10 @@ struct Mesh {
     void draw_fill (Canvas &canvas,
                     Cam const &cam) const {
         for (auto const &idx : idxs) {
-            draw_tri({ verts[idx[0]] + origin,
-                       verts[idx[1]] + origin,
-                       verts[idx[2]] + origin },
-                       canvas, cam);
+            ::draw_fill({ verts[idx[0]] + origin,
+                          verts[idx[1]] + origin,
+                          verts[idx[2]] + origin },
+                        canvas, cam);
         }
     }
 
@@ -43,14 +43,9 @@ struct Mesh {
     void draw_line (Canvas &canvas,
                     Cam const &cam) const {
         for (auto const &idx : idxs) {
-            Tri const t { verts[idx[0]] + origin,
+            ::draw_line({ verts[idx[0]] + origin,
                           verts[idx[1]] + origin,
-                          verts[idx[2]] + origin };
-            ::draw_line(t.verts[0], t.verts[1],
-                        canvas, cam);
-            ::draw_line(t.verts[1], t.verts[2],
-                        canvas, cam);
-            ::draw_line(t.verts[2], t.verts[0],
+                          verts[idx[2]] + origin },
                         canvas, cam);
         }
     }

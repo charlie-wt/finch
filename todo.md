@@ -4,13 +4,14 @@
 * [~] filled-shading
     * [x] triangle primitive
     * [x] wavefront-style representation
-    * [ ] z-buffer
+    * [x] z-buffer
     * [ ] shading (prob via dithering)
     * [ ] back-face culling?
 * [ ] reconcile `BrailleCanvas` & `CharCanvas`
     * [ ] prob make braille some kind of filter? may
           affect dithering, too
 * [ ] reconcile `TextCanvas` & `BrailleCanvas`
+* [x] frame timer (w/ av. reporting)
 * [ ] colour
 * [ ] something non-mesh-based
     * (mostly just to try out, and make any necessary

@@ -17,6 +17,7 @@
     * (mostly just to try out, and make any necessary
       conveniences)
     * simple fluid sim?
+    * [ ] sprite rendering
 * [~] movable camera
 * [ ] particles?
 * [x] proper makefile

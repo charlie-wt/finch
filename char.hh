@@ -17,5 +17,5 @@ struct CharCanvas {
 
     int64_t w, h;
     std::string data;
-    DepthBuffer db;
+    DepthBuffer depth_buf;
 };

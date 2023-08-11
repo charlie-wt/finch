@@ -40,7 +40,7 @@ CXXFLAGS=$(BASIC_FLAGS) $(INC_FLAGS)
 
 
 ### rules ###
-all: debug # `make` defaults to a debug build (`make debug`)
+.DEFAULT_GOAL := debug
 
 # debug
 debug: BASIC_FLAGS += $(DEBUG_FLAGS)

@@ -48,9 +48,8 @@ struct vec : std::array<T, N> {
              std::enable_if_t<N != 0, bool> = true>
     T dot (vec<S, N> const &other) {
         T res = (*this)[0] * other[0];
-        for (size_t i = 1; i < N; i++) {
+        for (size_t i = 1; i < N; i++)
             res += (*this)[i] * other[i];
-        }
         return res;
     }
 
@@ -96,6 +95,7 @@ struct vec : std::array<T, N> {
              std::enable_if_t<N >= 4 && std::is_same<D, T>::value, bool> = true>
     T const & w () const { return (*this)[3]; }
 
+    /* TODO #enhancement: expression templates */
     Vec& operator+= (T val) {
         for (auto &e : *this)
             e += val;

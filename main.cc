@@ -40,7 +40,7 @@ int main () {
                        double dt,
                        uint64_t count,
                        LoopState const &state) {
-        (void)t; (void)dt; (void)count;
+        (void)t; (void)dt; (void)count; (void)state;
 
         c.clear();
         tc.clear();

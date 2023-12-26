@@ -50,15 +50,15 @@ struct Mesh {
         }
     }
 
-    Mesh& rotate (vec3 axis, double degs);
+    Mesh& rotate(vec3 axis, double degs);
 
     // move all the points, but not the origin
-    Mesh& offset (vec3 change);
+    Mesh& offset(vec3 change);
 
     // move the origin, from which points are
     // rotated & drawn
-    Mesh& operator+= (vec3 change);
-    Mesh& operator-= (vec3 change);
+    Mesh& operator+=(vec3 change);
+    Mesh& operator-=(vec3 change);
 
     std::vector<vec3> verts;
     std::vector<vec3> norms;
@@ -66,7 +66,7 @@ struct Mesh {
     vec3 origin;
 };
 
-Mesh offset (Mesh s, vec3 change);
+Mesh offset(Mesh s, vec3 change);
 
-Mesh operator+ (Mesh s, vec3 offset);
-Mesh operator- (Mesh s, vec3 offset);
+Mesh operator+(Mesh s, vec3 offset);
+Mesh operator-(Mesh s, vec3 offset);

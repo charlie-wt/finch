@@ -6,7 +6,7 @@ BASIC_FLAGS=-Wall -Werror -Wextra -Wpedantic -std=c++17 -MD -DNCURSES_WIDECHAR
 SRC_DIR=.
 
 # external dependencies
-INC_DIR=../../Libraries
+INC_DIR=
 INC_NAMES=
 LIB_NAMES=ncursesw
 

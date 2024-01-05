@@ -26,14 +26,19 @@ struct Block {
 struct BrailleCanvas {
     BrailleCanvas (TermInfo const &t);
 
-    void set (pixel p,
+    void set (int64_t x, int64_t y,
               double depth = 0,
               bool on = true);
+    void set (pixel p,
+              double depth = 0,
+              bool on = true)
+        { set(p.x(), p.y(), depth, on); }
     void draw () const;
     void clear ();
 
     int64_t char_w, char_h;
     int64_t w, h; // in braille dots
     std::vector<Block> data;
+    /* TODO #remove */
     DepthBuffer depth_buf;
 };

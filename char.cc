@@ -9,15 +9,17 @@ CharCanvas::CharCanvas (TermInfo const &t)
     , data(w * h, ' ')
     , depth_buf(t) {}
 
-void CharCanvas::set (pixel p, char c) {
-    if (p.x() < 0 || p.y() < 0 ||
-        p.x() >= w || p.y() >= h)
+void CharCanvas::set (int64_t x, int64_t y,
+                      char c) {
+    if (x < 0 || y < 0 ||
+        x >= w || y >= h)
         return;
-    data[(p.y() * w) + p.x()] = c;
+    data[(y * w) + x] = c;
 }
 
-void CharCanvas::set (pixel p, double depth) {
-    if (!depth_buf.set(p, depth))
+void CharCanvas::set (int64_t x, int64_t y,
+                      double depth) {
+    if (!depth_buf.set(x, y, depth))
         return;
 
     int const zi = depth;
@@ -27,7 +29,7 @@ void CharCanvas::set (pixel p, double depth) {
             ? '^'
             : std::to_string(zi)[0];
 
-    set(p, ch);
+    set(x, y, ch);
 }
 
 void CharCanvas::draw () const {

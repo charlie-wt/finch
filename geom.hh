@@ -46,7 +46,7 @@ struct vec : std::array<T, N> {
 
     template<typename S,
              std::enable_if_t<N != 0, bool> = true>
-    T dot (vec<S, N> const &other) {
+    T dot (vec<S, N> const &other) const {
         T res = (*this)[0] * other[0];
         for (size_t i = 1; i < N; i++)
             res += (*this)[i] * other[i];
@@ -67,8 +67,6 @@ struct vec : std::array<T, N> {
     Q to () const
         { return cast<typename Q::type, Q::size>(); }
 
-    /* TODO #enhancement: make these simple
-     * members, not methods */
     // need D simply because enable_if only works
     // based on template params for the method,
     // whereas the actual condition is only based
@@ -86,6 +84,8 @@ struct vec : std::array<T, N> {
     template<typename D = T,
              std::enable_if_t<N >= 2 && std::is_same<D, T>::value, bool> = true>
     T const & y () const { return (*this)[1]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 3 && std::is_same<D, T>::value, bool> = true>
     T& z () { return (*this)[2]; }
     template<typename D = T,
              std::enable_if_t<N >= 3 && std::is_same<D, T>::value, bool> = true>
@@ -94,6 +94,31 @@ struct vec : std::array<T, N> {
     template<typename D = T,
              std::enable_if_t<N >= 4 && std::is_same<D, T>::value, bool> = true>
     T const & w () const { return (*this)[3]; }
+
+    template<typename D = T,
+             std::enable_if_t<N >= 1 && std::is_same<D, T>::value, bool> = true>
+    T& r () { return (*this)[0]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 1 && std::is_same<D, T>::value, bool> = true>
+    T const & r () const { return (*this)[0]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 2 && std::is_same<D, T>::value, bool> = true>
+    T& g () { return (*this)[1]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 2 && std::is_same<D, T>::value, bool> = true>
+    T const & g () const { return (*this)[1]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 3 && std::is_same<D, T>::value, bool> = true>
+    T& b () { return (*this)[2]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 3 && std::is_same<D, T>::value, bool> = true>
+    T const & b () const { return (*this)[2]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 4 && std::is_same<D, T>::value, bool> = true>
+    T& a () { return (*this)[3]; }
+    template<typename D = T,
+             std::enable_if_t<N >= 4 && std::is_same<D, T>::value, bool> = true>
+    T const & a () const { return (*this)[3]; }
 
     /* TODO #enhancement: expression templates */
     Vec& operator+= (T val) {
@@ -153,9 +178,9 @@ private:
     }
 };
 
-template<typename T, typename S, size_t N>
-T dot (vec<T, N> v, vec<S, N> const &other)
-    { v.dot(other); return v; }
+template<typename T, size_t N>
+vec<T, N> norm (vec<T, N> v)
+    { v.norm(); return v; }
 
 template<typename T, size_t N>
 vec<T, N> operator+ (vec<T, N> v, T val)
@@ -209,6 +234,9 @@ std::string pr (vec<T, N> const &v) {
     return ss.str();
 }
 
+/* TODO #enhancement: nd `range` iterator, to eg.
+ *                    get all pixels in a grid */
+
 template<size_t N>
 using vecf = vec<double, N>;
 
@@ -227,6 +255,8 @@ using vec2 = vec2f;
 using vec3 = vec3f;
 using vec4 = vec4f;
 using pixel = vec2i;
+using rgb = vec3;
+using rgba = vec4;
 
 template<typename T, size_t R, size_t C>
 struct mat {
@@ -421,3 +451,6 @@ vec3 projected (vec3 v, Canvas const &canvas,
                 Cam const &cam) {
     return screen(perspective(v, cam), canvas);
 }
+
+vec3 barycentric (vec3 p,
+                  vec3 tri1, vec3 tri2, vec3 tri3);

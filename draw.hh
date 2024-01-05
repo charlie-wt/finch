@@ -80,7 +80,7 @@ void draw_fill (std::array<vec3, 3> verts,
             for (int64_t x = lft; x < rgt; x++) {
                 double const z =
                     lftz + (x - lft) * z_step;
-                canvas.set({ x, y }, z);
+                canvas.set(x, y, z);
             }
         }
     }
@@ -106,7 +106,7 @@ void draw_fill (std::array<vec3, 3> verts,
             for (int64_t x = lft; x < rgt; x++) {
                 double const z =
                     lftz + (x - lft) * z_step;
-                canvas.set({ x, y }, z);
+                canvas.set(x, y, z);
             }
         }
     }
@@ -129,7 +129,7 @@ void draw (vec2 start, vec2 end,
     auto x = st.x();
     auto y = st.y();
     while (true) {
-        canvas.set({ x, y });
+        canvas.set(x, y);
 
         if (x == nd.x() && y == nd.y())
             break;
@@ -180,7 +180,7 @@ void draw_line (vec3 start, vec3 end,
         /* TODO #correctness: x is discretised */
         double const z = start.z() +
             (x - st.x()) * zstp;
-        canvas.set({ x, y }, z);
+        canvas.set(x, y, z);
 
         if (x == nd.x() && y == nd.y())
             break;

@@ -31,18 +31,19 @@ BrailleCanvas::BrailleCanvas (TermInfo const &t)
     , data(char_w * char_h, { 0 })
     , depth_buf(TermInfo {w, h}) { }
 
-void BrailleCanvas::set (pixel p,
+void BrailleCanvas::set (int64_t x, int64_t y,
                          double depth,
                          bool on) {
-    if (p.x() < 0 || p.y() < 0 ||
-        p.x() >= w || p.y() >= h)
+    if (x < 0 || y < 0 ||
+        x >= w || y >= h)
         return;
 
-    if (!depth_buf.set(p, depth))
-        return;
+    (void)depth;
+    /* if (!depth_buf.set(x, y, depth)) */
+    /*     return; */
 
-    pixel const cell { p.x() / 2, p.y() / 4 };
-    pixel const inner { p.x() % 2, p.y() % 4 };
+    pixel const cell { x / 2, y / 4 };
+    pixel const inner { x % 2, y % 4 };
 
     uint8_t const bit_idx = inner.y() + 4 * inner.x();
 

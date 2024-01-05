@@ -1,4 +1,4 @@
-* [~] x, y, z aliases for vec storage access
+* [x] x, y, z aliases for vec storage access
 * [x] do origins more properly
 * [ ] line clipping?
 * [~] filled-shading

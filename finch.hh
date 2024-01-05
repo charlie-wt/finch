@@ -3,16 +3,20 @@
 #include "braille.hh"
 #include "camera.hh"
 #include "char.hh"
+#include "dbg.hh"
 #include "draw.hh"
+#include "framebuffer.hh"
 #include "geom.hh"
 #include "line.hh"
 #include "mesh.hh"
+#include "shader.hh"
 #include "shape.hh"
 #include "term.hh"
 #include "text.hh"
 #include "time.hh"
 #include "triangle.hh"
 #include "util.hh"
+#include "xmesh.hh"
 
 #include <locale.h>
 
@@ -26,6 +30,8 @@ inline void init () {
     cbreak();
     noecho();
     curs_set(0);
+
+    init_dbg();
 }
 
 inline void teardown () {

@@ -16,11 +16,19 @@ struct DepthBuffer {
                      = 999);
                      /* = std::numeric_limits<double>::min()); */
 
-    bool set (pixel p, double depth = 0.);
+    bool set (int64_t x, int64_t y,
+              double depth = 0.);
+    bool set (pixel p, double depth = 0.)
+        { return set(p.x(), p.y(), depth); }
     void clear ();
 
-    double const &at (pixel p) const;
-    double &at (pixel p);
+    double const &at (int64_t x, int64_t y) const;
+    double &at (int64_t x, int64_t y);
+
+    double const &at (pixel p) const
+        { return at(p.x(), p.y()); }
+    double &at (pixel p)
+        { return at(p.x(), p.y()); }
 
     int64_t w, h;
     std::vector<double> data;

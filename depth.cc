@@ -1,6 +1,7 @@
 #include "depth.hh"
 
-#include <ncursesw/ncurses.h>
+/* TODO #remove */
+/* #include <ncursesw/ncurses.h> */
 
 #include <algorithm>
 
@@ -13,13 +14,18 @@ DepthBuffer::DepthBuffer (TermInfo const &t,
     , near(near)
     , far(far) { }
 
-bool DepthBuffer::set (pixel p, double depth) {
-    if (at(p) < depth ||
+bool DepthBuffer::set (int64_t x, int64_t y,
+                       double depth) {
+    if (x < 0 || y < 0 ||
+        x >= w || y >= h)
+        return false;
+
+    if (at(x, y) < depth ||
         depth < near ||
         depth > far)
         return false;
 
-    at(p) = depth;
+    at(x, y) = depth;
     return true;
 }
 
@@ -27,10 +33,11 @@ void DepthBuffer::clear () {
     std::fill(data.begin(), data.end(), far);
 }
 
-double &DepthBuffer::at (pixel p) {
-    return data[p.y() * w + p.x()];
+double &DepthBuffer::at (int64_t x, int64_t y) {
+    return data[y * w + x];
 }
 
-double const &DepthBuffer::at (pixel p) const {
-    return data[p.y() * w + p.x()];
+double const &DepthBuffer::at (int64_t x,
+                               int64_t y) const {
+    return data[y * w + x];
 }

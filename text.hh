@@ -20,6 +20,8 @@ struct TextCanvas {
         : w(t.w), h(t.h), text() {}
 
     void write (Text const &t) {
+        /* TODO #bug: clip string to within canvas
+         *            bounds */
         text.push_back(t);
     }
 

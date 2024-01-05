@@ -61,7 +61,7 @@ struct Tri {
                 auto const lft = low.x() + dl * prog;
                 auto const rgt = low.x() + dr * prog;
                 for (int64_t x = lft; x < rgt; x++)
-                    canvas.set({ x, y });
+                    canvas.set(x, y);
             }
         }
 
@@ -75,7 +75,7 @@ struct Tri {
                 auto const lft = left + dl * prog;
                 auto const rgt = right + dr * prog;
                 for (int64_t x = lft; x < rgt; x++)
-                    canvas.set({ x, y });
+                    canvas.set(x, y);
             }
         }
     }

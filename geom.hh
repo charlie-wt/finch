@@ -41,7 +41,9 @@ struct vec : std::array<T, N> {
     }
 
     void norm () {
-        *this /= this->length();
+        const auto l = this->length();
+        if (l)
+            *this /= l;
     }
 
     template<typename S,
@@ -181,6 +183,17 @@ private:
 template<typename T, size_t N>
 vec<T, N> norm (vec<T, N> v)
     { v.norm(); return v; }
+
+template<typename A, typename B>
+auto cross (vec<A, 3> const &a,
+                 vec<B, 3> const &b) ->
+        vec<decltype(std::declval<A>() *
+                     std::declval<B>()),
+            3> {
+    return { a[1] * b[2] - a[2] * b[1],
+             a[2] * b[0] - a[0] * b[2],
+             a[0] * b[1] - a[1] * b[0] };
+};
 
 template<typename T, size_t N>
 vec<T, N> operator+ (vec<T, N> v, T val)

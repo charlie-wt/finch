@@ -3,20 +3,8 @@
 #include "geom.hh"
 #include "mesh.hh"
 
-/* #include <unordered_map> */
 #include <vector>
 
-
-/* enum class VertexDataType { */
-/*     POSITION, */
-/*     NORMAL, */
-/*     COLOUR */
-/* }; */
-/* struct XMesh { */
-/*     std::vector<vec3i> indices; */
-/*     std::unordered_map<VertexDataType, vec3> verts; */
-/*     vec3 origin; */
-/* }; */
 
 template <typename Vert>
 struct XMesh {
@@ -77,4 +65,6 @@ struct PosNorm {
     vec3 norm;
 };
 
+/* TODO #temp */
 XMesh<PosNorm> to_xmesh (Mesh const &m);
+/* XMesh<Pos> to_xmesh (Mesh const &m); */

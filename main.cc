@@ -13,8 +13,7 @@ int main () {
     /* CharCanvas c(ti); */
     TextCanvas tc(ti);
 
-    /* TODO #finish */
-    LitShader sh(TermInfo { ti.w * 2, ti.h * 4 });
+    auto sh = flat_lit_shader<PosNorm>(ti);
 
     /* auto cb = Shape::cube(c.h * 0.5); */
 

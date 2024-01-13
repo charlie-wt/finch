@@ -186,7 +186,7 @@ vec<T, N> norm (vec<T, N> v)
 
 template<typename A, typename B>
 auto cross (vec<A, 3> const &a,
-                 vec<B, 3> const &b) ->
+            vec<B, 3> const &b) ->
         vec<decltype(std::declval<A>() *
                      std::declval<B>()),
             3> {

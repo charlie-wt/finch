@@ -169,7 +169,7 @@ void draw_line (vec3 start, vec3 end,
 
     auto error = dx + dy;
 
-    double const dz = end.z() - start.z();
+    double const dz = eproj.z() - sproj.z();
     double const zstp = dx == 0
         ? 0
         : dz / (nd.x() - st.x());

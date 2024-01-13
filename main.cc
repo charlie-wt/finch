@@ -15,14 +15,8 @@ int main () {
 
     auto sh = flat_lit_shader<PosNorm>(ti);
 
-    /* auto cb = Shape::cube(c.h * 0.5); */
-
-    auto ubj = Mesh::cube(c.h * 0.4);
-    /* TODO #temp */
-    ubj.norms = ubj.verts;
-    for (auto &norm : ubj.norms)
-        norm.norm();
-    auto obj = to_xmesh(ubj);
+    auto cb = Shape::cube(c.h * 0.5);
+    auto obj = cube(c.h * 0.4);
 
     /* double mag = 50; */
     /* double inc = 1; */
@@ -67,19 +61,19 @@ int main () {
         tc.clear();
         sh.clear();
 
-        /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
-        /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
+        cb.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        cb.origin.y() = sin(0.5 * t * M_PI) * 10.;
         /* cb.draw(c, cam); */
 
         obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        /* obj.origin.y() = sin(0.5 * t * M_PI) * 10.; */
-        /* obj.rotate({ 0, 1, 0 }, 30 * dt); */
+        obj.origin.y() = sin(0.5 * t * M_PI) * 10.;
         /* obj.draw(c, cam, DrawMode::FILL); */
         sh.draw(obj, cam);
 
         tc.write(1, tc.h - 2, state.speed_report());
 
         sh.render_to(c);
+        cb.draw(c, cam);
         c.draw();
         tc.draw();
         draw_dbg();

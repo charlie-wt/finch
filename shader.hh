@@ -2,6 +2,7 @@
 
 #include "char.hh"
 #include "depth.hh"
+#include "draw.hh"
 #include "framebuffer.hh"
 #include "term.hh"
 #include "xmesh.hh"
@@ -23,23 +24,36 @@ struct Shader {
 
     template <typename Vert>
     void draw (XMesh<Vert> const &mesh,
-               Cam const &cam) {
+               Cam const &cam,
+               DrawMode mode = DrawMode::FILL) {
+        switch (mode) {
+        case DrawMode::FILL:
+            draw_fill(mesh, cam);
+            break;
+        case DrawMode::LINE:
+            draw_line(mesh, cam);
+            break;
+        }
+    }
+
+    template <typename Vert>
+    void draw_fill (XMesh<Vert> const &mesh,
+                    Cam const &cam) {
         for (auto const &idx : mesh.indices) {
             std::array<Vert, 3> verts =
                 { mesh.verts[idx[0]],
                   mesh.verts[idx[1]],
                   mesh.verts[idx[2]] };
 
-            // apply origin & project
             for (auto &v : verts)
                 v = vert_shader(v, mesh, cam, buf);
 
-            draw(verts);
+            draw_fill(verts);
         }
     }
 
     template <typename Vert>
-    void draw (std::array<Vert, 3> verts) {
+    void draw_fill (std::array<Vert, 3> verts) {
         // separate into above/below horizontal,
         // fill rows, lerp sides {in,out}wards
         std::sort(verts.begin(),
@@ -151,6 +165,86 @@ struct Shader {
         }
     }
 
+    template <typename Vert>
+    void draw_line (XMesh<Vert> const &mesh,
+                    Cam const &cam) {
+        for (auto const &idx : mesh.indices) {
+            std::array<Vert, 3> verts =
+                { mesh.verts[idx[0]],
+                  mesh.verts[idx[1]],
+                  mesh.verts[idx[2]] };
+
+            for (auto &v : verts)
+                v = vert_shader(v, mesh, cam, buf);
+
+            draw_line(verts);
+        }
+    }
+
+    template <typename Vert>
+    void draw_line (std::array<Vert, 3> verts) {
+        for (size_t i = 0; i < 3; i++) {
+            // bresenham's
+            auto const start = verts[i].pos;
+            auto const end  = verts[(i+1) % 3].pos;
+
+            auto const st = start.template to<pixel>();
+            auto const nd = end.template to<pixel>();
+
+            auto const dx = abs(nd.x() - st.x());
+            auto const dy = -abs(nd.y() - st.y());
+            auto const xinc = st.x() < nd.x() ? 1 : -1;
+            auto const yinc = st.y() < nd.y() ? 1 : -1;
+
+            auto error = dx + dy;
+
+            double const dz = end.z() - start.z();
+            double const zstp = dx == 0
+                ? 0
+                : dz / (nd.x() - st.x());
+
+            auto x = st.x();
+            auto y = st.y();
+            while (true) {
+                /* TODO #correctness: x is discretised */
+                double const z = start.z() +
+                    (x - st.x()) * zstp;
+                if (depth_buf.set(x, y, z)) {
+                    /* TODO #cleanup */
+                    vec3 fpx
+                        { static_cast<double>(x),
+                          static_cast<double>(y),
+                          static_cast<double>(z) };
+                    vec3 const bc = barycentric(
+                        fpx, verts[0].pos,
+                        verts[1].pos, verts[2].pos);
+                    buf.set(x, y,
+                            frag_shader(
+                                fpx, bc, verts));
+                }
+
+                if (x == nd.x() && y == nd.y())
+                    break;
+
+                auto const error2 = 2 * error;
+
+                if (error2 >= dy) {
+                    if (x == nd.x())
+
+                    error += dy;
+                    x += xinc;
+                }
+
+                if (error2 <= dx) {
+                    if (y == nd.y())
+                        break;
+                    error += dx;
+                    y += yinc;
+                }
+            }
+        }
+    }
+
     void clear () {
         buf.clear();
         depth_buf.clear();
@@ -175,13 +269,48 @@ struct Shader {
 };
 
 template <typename Vert>
-inline auto lit_shader (TermInfo const &ti) {
+auto unlit_shader (TermInfo const &ti) {
     return Shader(
         TermInfo { ti.w * 2, ti.h * 4 },
         [](Vert v,
            XMesh<Vert> const &mesh,
            Cam const &cam,
            Framebuffer const &buf) {
+            // apply origin & project
+            v.pos = projected(
+                v.pos + mesh.origin,
+                buf, cam);
+            return v;
+        },
+        [](vec3 pos,
+           vec3 bc,
+           std::array<Vert, 3> verts) {
+            (void)pos; (void)bc; (void)verts;
+            return rgb::ones();
+        },
+        [](Framebuffer const &buf,
+           auto &canvas) {
+            for (int y = 0; y < buf.h; y++) {
+                for (int x = 0; x < buf.w; x++) {
+                    /* TODO #enhancement: assuming
+                     * monochrome */
+                    bool const on = buf.at(x, y).r() > 0.5;
+                    canvas.set(x, y, 0, on);
+                }
+            }
+            return true;
+        }
+    );
+}
+template <typename Vert>
+auto lit_shader (TermInfo const &ti) {
+    return Shader(
+        TermInfo { ti.w * 2, ti.h * 4 },
+        [](Vert v,
+           XMesh<Vert> const &mesh,
+           Cam const &cam,
+           Framebuffer const &buf) {
+            // apply origin & project
             v.pos = projected(
                 v.pos + mesh.origin,
                 buf, cam);
@@ -197,7 +326,7 @@ inline auto lit_shader (TermInfo const &ti) {
                 verts[2].norm * bc[2]
             };
             double lgt = fabs(nm.dot(vec3 {0,0,-1}));
-            return vec3 { lgt, lgt, lgt };
+            return rgb { lgt, lgt, lgt };
         },
         [](Framebuffer const &buf,
            auto &canvas) {
@@ -223,6 +352,7 @@ auto flat_lit_shader (TermInfo const &ti) {
            XMesh<Vert> const &mesh,
            Cam const &cam,
            Framebuffer const &buf) {
+            // apply origin & project
             v.pos = projected(
                 v.pos + mesh.origin,
                 buf, cam);
@@ -236,7 +366,7 @@ auto flat_lit_shader (TermInfo const &ti) {
                 verts[1].pos - verts[0].pos,
                 verts[2].pos - verts[0].pos));
             double lgt = fabs(nm.dot(vec3 {0,0,-1}));
-            return vec3 { lgt, lgt, lgt };
+            return rgb { lgt, lgt, lgt };
         },
         [](Framebuffer const &buf,
            auto &canvas) {

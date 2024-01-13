@@ -8,10 +8,9 @@
 
 // flattened, colour-per-pixel buffer of a frame,
 // acting as if we were just a normal display;
-// (TODO #finish) use so that we can worry about
-// how to map this to canvases (eg. dithering,
-// colour-resolution) separately from how to draw
-// the scene.
+// use so that we can worry about how to map this
+// to canvases (eg. dithering, colour-resolution)
+// separately from how to draw the scene.
 struct Framebuffer {
     Framebuffer (TermInfo const &t);
 

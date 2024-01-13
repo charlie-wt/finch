@@ -68,3 +68,11 @@ struct PosNorm {
 /* TODO #temp */
 XMesh<PosNorm> to_xmesh (Mesh const &m);
 /* XMesh<Pos> to_xmesh (Mesh const &m); */
+
+
+// shapes
+XMesh<PosNorm> box (double width,
+                    double height,
+                    double depth);
+
+XMesh<PosNorm> cube (double length);

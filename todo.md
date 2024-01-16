@@ -10,6 +10,7 @@
 * [x] reconcile `BrailleCanvas` & `CharCanvas`
     * [ ] move the `render_fn`s out of `Shader`
     * [ ] don't have `Shader`s own their `Framebuffer`s
+    * [ ] deal with canvas resolutions better
 * [ ] reconcile `TextCanvas` & `BrailleCanvas`
     * not sure if worth trying to do this
 * [x] frame timer (w/ av. reporting)

@@ -13,10 +13,15 @@ int main () {
     /* CharCanvas c(ti); */
     TextCanvas tc(ti);
 
-    auto sh = flat_lit_shader<PosNorm>(ti);
+    auto sh = flat_lit_shader<Pos>(ti);
 
     auto cb = Shape::cube(c.h * 0.5);
-    auto obj = cube(c.h * 0.4);
+    auto ubj = cube(c.h * 0.4);
+
+    XMesh<Pos> obj { ubj.indices, {}, ubj.origin };
+    obj.verts.reserve(ubj.verts.size());
+    for (auto const & v : ubj.verts)
+        obj.verts.emplace_back(v.pos);
 
     /* double mag = 50; */
     /* double inc = 1; */

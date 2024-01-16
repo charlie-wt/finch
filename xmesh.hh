@@ -8,15 +8,19 @@
 
 template <typename Vert>
 struct XMesh {
-    /* TODO #robustness: assuming Vert members
-     *                   atm; do transformations
-     *                   more properly at some
-     *                   point */
+    /* TODO #robustness: sort of assuming Vert
+     *                   members atm; do
+     *                   transformations more
+     *                   properly at some point */
     XMesh<Vert>& rotate(vec3 axis, double degs) {
         auto const trans = rotation(axis, degs);
         for (auto &v : verts) {
             v.pos = trans % v.pos;
-            v.norm = trans % v.norm;
+
+            constexpr bool has_norms =
+                requires(Vert const &v) { v.norm; };
+            if constexpr (has_norms)
+                v.norm = trans % v.norm;
         }
         return *this;
     }

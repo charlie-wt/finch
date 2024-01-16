@@ -2,7 +2,7 @@
 
 # basic options
 CXX=g++
-BASIC_FLAGS=-Wall -Werror -Wextra -Wpedantic -std=c++17 -MD -DNCURSES_WIDECHAR
+BASIC_FLAGS=-Wall -Werror -Wextra -Wpedantic -std=c++20 -MD -DNCURSES_WIDECHAR
 SRC_DIR=.
 
 # external dependencies

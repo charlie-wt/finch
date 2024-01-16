@@ -48,6 +48,19 @@ struct Shader {
             for (auto &v : verts)
                 v = vert_shader(v, mesh, cam, buf);
 
+            // back-face culling
+            constexpr bool has_norms =
+                requires(Vert const &v) { v.norm; };
+            if constexpr (has_norms) {
+                auto const nm = vec3 {
+                    verts[0].norm +
+                    verts[1].norm +
+                    verts[2].norm
+                } / 3.0;
+                if (nm.dot(vec3 {0,0,1}) > 0)
+                    continue;
+            }
+
             draw_fill(verts);
         }
     }
@@ -302,6 +315,7 @@ auto unlit_shader (TermInfo const &ti) {
         }
     );
 }
+
 template <typename Vert>
 auto lit_shader (TermInfo const &ti) {
     return Shader(
@@ -325,7 +339,7 @@ auto lit_shader (TermInfo const &ti) {
                 verts[1].norm * bc[1] +
                 verts[2].norm * bc[2]
             };
-            double lgt = fabs(nm.dot(vec3 {0,0,-1}));
+            double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
         },
         [](Framebuffer const &buf,
@@ -365,7 +379,7 @@ auto flat_lit_shader (TermInfo const &ti) {
             vec3 const nm = norm(cross(
                 verts[1].pos - verts[0].pos,
                 verts[2].pos - verts[0].pos));
-            double lgt = fabs(nm.dot(vec3 {0,0,-1}));
+            double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
         },
         [](Framebuffer const &buf,

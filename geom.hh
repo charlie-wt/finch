@@ -40,10 +40,10 @@ struct vec : std::array<T, N> {
         return std::sqrt(res);
     }
 
-    void norm () {
-        const auto l = this->length();
+    void norm (T length = 1.0) {
+        auto const l = this->length();
         if (l)
-            *this /= l;
+            *this *= length/l;
     }
 
     template<typename S,
@@ -181,8 +181,8 @@ private:
 };
 
 template<typename T, size_t N>
-vec<T, N> norm (vec<T, N> v)
-    { v.norm(); return v; }
+vec<T, N> norm (vec<T, N> v, T length = 1.0)
+    { v.norm(length); return v; }
 
 template<typename A, typename B>
 auto cross (vec<A, 3> const &a,

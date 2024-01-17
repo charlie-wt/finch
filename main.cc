@@ -13,15 +13,17 @@ int main () {
     /* CharCanvas c(ti); */
     TextCanvas tc(ti);
 
-    auto sh = flat_lit_shader<Pos>(ti);
+    auto sh = flat_lit_shader<PosNorm>(ti);
 
-    auto cb = Shape::cube(c.h * 0.5);
-    auto ubj = cube(c.h * 0.4);
+    /* auto cb = Shape::cube(c.h * 0.5); */
+    /* auto ubj = cube(c.h * 0.4); */
 
-    XMesh<Pos> obj { ubj.indices, {}, ubj.origin };
-    obj.verts.reserve(ubj.verts.size());
-    for (auto const & v : ubj.verts)
-        obj.verts.emplace_back(v.pos);
+    /* XMesh<Pos> obj { ubj.indices, {}, ubj.origin }; */
+    /* obj.verts.reserve(ubj.verts.size()); */
+    /* for (auto const & v : ubj.verts) */
+    /*     obj.verts.emplace_back(v.pos); */
+
+    auto obj = sphere(c.h * 0.4, 1);
 
     /* double mag = 50; */
     /* double inc = 1; */
@@ -66,8 +68,8 @@ int main () {
         tc.clear();
         sh.clear();
 
-        cb.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        cb.origin.y() = sin(0.5 * t * M_PI) * 10.;
+        /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
+        /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
         /* cb.draw(c, cam); */
 
         obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
@@ -78,7 +80,7 @@ int main () {
         tc.write(1, tc.h - 2, state.speed_report());
 
         sh.render_to(c);
-        cb.draw(c, cam);
+        /* cb.draw(c, cam); */
         c.draw();
         tc.draw();
         draw_dbg();

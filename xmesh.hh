@@ -80,3 +80,6 @@ XMesh<PosNorm> box (double width,
                     double depth);
 
 XMesh<PosNorm> cube (double length);
+
+XMesh<PosNorm> sphere (double radius,
+                       int64_t subdivisions = 2);

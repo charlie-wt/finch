@@ -6,7 +6,7 @@
     * [x] wavefront-style representation
     * [x] z-buffer
     * [x] shading (prob via dithering)
-    * [ ] back-face culling
+    * [x] back-face culling
 * [x] reconcile `BrailleCanvas` & `CharCanvas`
     * [ ] move the `render_fn`s out of `Shader`
     * [ ] don't have `Shader`s own their `Framebuffer`s

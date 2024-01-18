@@ -243,7 +243,7 @@ struct Shader {
 
                 if (error2 >= dy) {
                     if (x == nd.x())
-
+                        break;
                     error += dy;
                     x += xinc;
                 }

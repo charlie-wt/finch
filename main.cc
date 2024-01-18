@@ -23,7 +23,8 @@ int main () {
     /* for (auto const & v : ubj.verts) */
     /*     obj.verts.emplace_back(v.pos); */
 
-    auto obj = sphere(c.h * 0.4, 1);
+    auto obj = sphere(c.h * 0.4, 0);
+    auto shell = sphere(c.h * 0.45, 0);
 
     /* double mag = 50; */
     /* double inc = 1; */
@@ -76,6 +77,11 @@ int main () {
         obj.origin.y() = sin(0.5 * t * M_PI) * 10.;
         /* obj.draw(c, cam, DrawMode::FILL); */
         sh.draw(obj, cam);
+
+        shell.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        shell.origin.y() = sin(0.5 * t * M_PI) * 10.;
+        /* shell.draw(c, cam, DrawMode::LINE); */
+        sh.draw(shell, cam, DrawMode::LINE);
 
         tc.write(1, tc.h - 2, state.speed_report());
 

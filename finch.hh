@@ -16,7 +16,6 @@
 #include "time.hh"
 #include "triangle.hh"
 #include "util.hh"
-#include "xmesh.hh"
 
 #include <locale.h>
 

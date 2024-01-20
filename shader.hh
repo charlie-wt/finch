@@ -4,8 +4,8 @@
 #include "depth.hh"
 #include "draw.hh"
 #include "framebuffer.hh"
+#include "mesh.hh"
 #include "term.hh"
-#include "xmesh.hh"
 
 
 template<typename VertSh,
@@ -23,7 +23,7 @@ struct Shader {
         , render_fn(render_fn) {}
 
     template <typename Vert>
-    void draw (XMesh<Vert> const &mesh,
+    void draw (Mesh<Vert> const &mesh,
                Cam const &cam,
                DrawMode mode = DrawMode::FILL) {
         switch (mode) {
@@ -37,7 +37,7 @@ struct Shader {
     }
 
     template <typename Vert>
-    void draw_fill (XMesh<Vert> const &mesh,
+    void draw_fill (Mesh<Vert> const &mesh,
                     Cam const &cam) {
         for (auto const &idx : mesh.indices) {
             std::array<Vert, 3> verts =
@@ -179,7 +179,7 @@ struct Shader {
     }
 
     template <typename Vert>
-    void draw_line (XMesh<Vert> const &mesh,
+    void draw_line (Mesh<Vert> const &mesh,
                     Cam const &cam) {
         for (auto const &idx : mesh.indices) {
             std::array<Vert, 3> verts =
@@ -286,7 +286,7 @@ auto unlit_shader (TermInfo const &ti) {
     return Shader(
         TermInfo { ti.w * 2, ti.h * 4 },
         [](Vert v,
-           XMesh<Vert> const &mesh,
+           Mesh<Vert> const &mesh,
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
@@ -321,7 +321,7 @@ auto lit_shader (TermInfo const &ti) {
     return Shader(
         TermInfo { ti.w * 2, ti.h * 4 },
         [](Vert v,
-           XMesh<Vert> const &mesh,
+           Mesh<Vert> const &mesh,
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
@@ -363,7 +363,7 @@ auto flat_lit_shader (TermInfo const &ti) {
     return Shader(
         TermInfo { ti.w * 2, ti.h * 4 },
         [](Vert v,
-           XMesh<Vert> const &mesh,
+           Mesh<Vert> const &mesh,
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project

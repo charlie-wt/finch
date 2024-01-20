@@ -14,7 +14,7 @@ std::vector<std::wstring> _lines;
 }
 
 void init_dbg () {
-    _canv = TextCanvas(TermInfo::detect());
+    _canv = TextCanvas(term_dims());
 }
 
 void dbg (std::wstring const &text) {

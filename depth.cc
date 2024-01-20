@@ -1,23 +1,19 @@
 #include "depth.hh"
 
-/* TODO #remove */
-/* #include <ncursesw/ncurses.h> */
-
 #include <algorithm>
 
 
-DepthBuffer::DepthBuffer (TermInfo const &t,
+DepthBuffer::DepthBuffer (pixel const &canvas_dims,
                           double near, double far)
-    : w(t.w)
-    , h(t.h)
-    , data(w * h, far)
+    : dims(canvas_dims)
+    , data(dims.x() * dims.y(), far)
     , near(near)
     , far(far) { }
 
 bool DepthBuffer::set (int64_t x, int64_t y,
                        double depth) {
     if (x < 0 || y < 0 ||
-        x >= w || y >= h)
+        x >= dims.x() || y >= dims.y())
         return false;
 
     if (at(x, y) < depth ||
@@ -34,10 +30,10 @@ void DepthBuffer::clear () {
 }
 
 double &DepthBuffer::at (int64_t x, int64_t y) {
-    return data[y * w + x];
+    return data[y * dims.x() + x];
 }
 
 double const &DepthBuffer::at (int64_t x,
                                int64_t y) const {
-    return data[y * w + x];
+    return data[y * dims.x() + x];
 }

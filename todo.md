@@ -1,7 +1,7 @@
 * [x] x, y, z aliases for vec storage access
 * [x] do origins more properly
 * [ ] line clipping?
-* [~] filled-shading
+* [x] filled-shading
     * [x] triangle primitive
     * [x] wavefront-style representation
     * [x] z-buffer
@@ -10,7 +10,7 @@
 * [x] reconcile `BrailleCanvas` & `CharCanvas`
     * [ ] move the `render_fn`s out of `Shader`
     * [ ] don't have `Shader`s own their `Framebuffer`s
-    * [ ] deal with canvas resolutions better
+    * [x] deal with canvas resolutions better
 * [ ] reconcile `TextCanvas` & `BrailleCanvas`
     * not sure if worth trying to do this
 * [x] frame timer (w/ av. reporting)

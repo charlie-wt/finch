@@ -12,7 +12,7 @@
 // to canvases (eg. dithering, colour-resolution)
 // separately from how to draw the scene.
 struct Framebuffer {
-    Framebuffer (TermInfo const &t);
+    Framebuffer (pixel const &canvas_dims);
 
     void set (int64_t x, int64_t y,
               rgb col = { 1, 1, 1 });
@@ -29,7 +29,7 @@ struct Framebuffer {
     inline rgb &at (pixel p)
         { return at(p.x(), p.y()); }
 
-    int64_t w, h;
+    pixel dims;
     rgb bg;
     std::vector<rgb> data;
 };

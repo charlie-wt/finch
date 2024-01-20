@@ -10,6 +10,7 @@ enum class DrawMode {
     LINE
 };
 
+/* TODO #cleanup: framebuffers, not canvases */
 
 template <typename Canvas>
 void draw_fill (std::array<vec3, 3> verts,

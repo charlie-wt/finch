@@ -23,24 +23,16 @@ wchar_t Block::to_char () const {
     return static_cast<wchar_t>(10240 + res);
 }
 
-BrailleCanvas::BrailleCanvas (TermInfo const &t)
-    : char_w(t.w)
-    , char_h(t.h)
-    , w(char_w * 2)
-    , h(char_h * 4)
-    , data(char_w * char_h, { 0 })
-    , depth_buf(TermInfo {w, h}) { }
+BrailleCanvas::BrailleCanvas (pixel const &char_dims_)
+    : char_dims(char_dims_)
+    , dims(char_dims_ * BrailleCanvas::scale)
+    , data(char_dims_.x() * char_dims_.y(), { 0 }) {}
 
 void BrailleCanvas::set (int64_t x, int64_t y,
-                         double depth,
                          bool on) {
     if (x < 0 || y < 0 ||
-        x >= w || y >= h)
+        x >= dims.x() || y >= dims.y())
         return;
-
-    (void)depth;
-    /* if (!depth_buf.set(x, y, depth)) */
-    /*     return; */
 
     pixel const cell { x / 2, y / 4 };
     pixel const inner { x % 2, y % 4 };
@@ -48,7 +40,7 @@ void BrailleCanvas::set (int64_t x, int64_t y,
     uint8_t const bit_idx = inner.y() + 4 * inner.x();
 
     int64_t const block_idx =
-        (cell.y() * char_w) + cell.x();
+        (cell.y() * char_dims.x()) + cell.x();
 
     Block const before = data[block_idx];
 
@@ -63,8 +55,8 @@ void BrailleCanvas::set (int64_t x, int64_t y,
 
 void BrailleCanvas::draw () const {
     for (size_t i = 0; i < data.size(); i++) {
-        size_t const x = i % char_w;
-        size_t const y = floor(i / char_w);
+        size_t const x = i % char_dims.x();
+        size_t const y = floor(i / char_dims.x());
         const wchar_t s[2] { data[i].to_char(), 0 };
         mvaddwstr(y, x, s);
     }
@@ -73,5 +65,4 @@ void BrailleCanvas::draw () const {
 
 void BrailleCanvas::clear () {
     std::fill(data.begin(), data.end(), Block { 0 });
-    depth_buf.clear();
 }

@@ -6,7 +6,7 @@
 #include <ncursesw/ncurses.h>
 
 
-TermInfo TermInfo::detect () {
+pixel term_dims () {
     // ncurses
     if (stdscr != nullptr)
         return { COLS, LINES };

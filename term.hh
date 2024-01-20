@@ -1,10 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "geom.hh"
 
 
-struct TermInfo {
-    static TermInfo detect();
-
-    int64_t w, h;
-};
+pixel term_dims ();

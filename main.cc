@@ -8,24 +8,24 @@ using namespace std;
 int main () {
     init();
 
-    auto const ti = TermInfo::detect();
-    BrailleCanvas c(ti);
-    /* CharCanvas c(ti); */
-    TextCanvas tc(ti);
+    auto const d = term_dims();
+    BrailleCanvas c(d);
+    /* CharCanvas c(d); */
+    TextCanvas tc(d);
 
-    auto sh = flat_lit_shader<PosNorm>(ti);
+    auto sh = flat_lit_shader<PosNorm>(c.dims);
 
-    /* auto cb = Shape::cube(c.h * 0.5); */
+    /* auto cb = Shape::cube(c.dims.y() * 0.5); */
 
-    auto obj = sphere(c.h * 0.4, 0);
-    auto shell = sphere(c.h * 0.45, 0);
+    auto obj = sphere(c.dims.y() * 0.4, 0);
+    auto shell = sphere(c.dims.y() * 0.45, 0);
 
     /* double mag = 75; */
     /* double inc = 1; */
     /* sh.depth_buf.near = -mag; */
 
-    /* double const w = c.w * 0.75; */
-    /* double const h = c.h * 0.75; */
+    /* double const w = c.dims.x() * 0.75; */
+    /* double const h = c.dims.y() * 0.75; */
     /* auto obj = Mesh<PosNorm> { */
     /*     { vec3i { 0, 1, 2 } }, */
     /*     { { vec3 { -w/2, -h/2, 0 }, */
@@ -63,7 +63,7 @@ int main () {
         shell.origin.y() = sin(0.5 * t * M_PI) * 10.;
         sh.draw(shell, cam, DrawMode::LINE);
 
-        tc.write(1, tc.h - 2, state.speed_report());
+        tc.write(1, tc.dims.y() - 2, state.speed_report());
 
         sh.render_to(c);
         /* cb.draw(c, cam); */

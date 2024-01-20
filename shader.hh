@@ -12,12 +12,12 @@ template<typename VertSh,
          typename FragSh,
          typename RenderFn>
 struct Shader {
-    Shader (TermInfo const &t,
+    Shader (pixel const &canvas_dims,
             VertSh const &vert_shader,
             FragSh const &frag_shader,
             RenderFn const &render_fn)
-        : buf(t)
-        , depth_buf(t)
+        : buf(canvas_dims)
+        , depth_buf(canvas_dims)
         , vert_shader(vert_shader)
         , frag_shader(frag_shader)
         , render_fn(render_fn) {}
@@ -265,10 +265,8 @@ struct Shader {
 
     template <typename Canvas>
     bool render_to (Canvas &canvas) {
-        if (canvas.w != buf.w ||
-            canvas.h != buf.h) {
+        if (canvas.dims != buf.dims)
             return false;
-        }
 
         return render_fn(buf, canvas);
     }
@@ -282,9 +280,9 @@ struct Shader {
 };
 
 template <typename Vert>
-auto unlit_shader (TermInfo const &ti) {
+auto unlit_shader (pixel const &canvas_dims) {
     return Shader(
-        TermInfo { ti.w * 2, ti.h * 4 },
+        canvas_dims,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -303,12 +301,12 @@ auto unlit_shader (TermInfo const &ti) {
         },
         [](Framebuffer const &buf,
            auto &canvas) {
-            for (int y = 0; y < buf.h; y++) {
-                for (int x = 0; x < buf.w; x++) {
+            for (int y = 0; y < buf.dims.y(); y++) {
+                for (int x = 0; x < buf.dims.x(); x++) {
                     /* TODO #enhancement: assuming
                      * monochrome */
                     bool const on = buf.at(x, y).r() > 0.5;
-                    canvas.set(x, y, 0, on);
+                    canvas.set(x, y, on);
                 }
             }
             return true;
@@ -317,9 +315,9 @@ auto unlit_shader (TermInfo const &ti) {
 }
 
 template <typename Vert>
-auto lit_shader (TermInfo const &ti) {
+auto lit_shader (pixel const &canvas_dims) {
     return Shader(
-        TermInfo { ti.w * 2, ti.h * 4 },
+        canvas_dims,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -344,13 +342,13 @@ auto lit_shader (TermInfo const &ti) {
         },
         [](Framebuffer const &buf,
            auto &canvas) {
-            for (int y = 0; y < buf.h; y++) {
-                for (int x = 0; x < buf.w; x++) {
+            for (int y = 0; y < buf.dims.y(); y++) {
+                for (int x = 0; x < buf.dims.x(); x++) {
                     /* TODO #enhancement: assuming
                      * monochrome */
                     double const adj = static_cast<double>(rand() % 10) / 20.0;
                     bool const on = buf.at(x, y).r() + adj > 0.5;
-                    canvas.set(x, y, 0, on);
+                    canvas.set(x, y, on);
                 }
             }
             return true;
@@ -359,9 +357,9 @@ auto lit_shader (TermInfo const &ti) {
 }
 
 template <typename Vert>
-auto flat_lit_shader (TermInfo const &ti) {
+auto flat_lit_shader (pixel const &canvas_dims) {
     return Shader(
-        TermInfo { ti.w * 2, ti.h * 4 },
+        canvas_dims,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -384,13 +382,13 @@ auto flat_lit_shader (TermInfo const &ti) {
         },
         [](Framebuffer const &buf,
            auto &canvas) {
-            for (int y = 0; y < buf.h; y++) {
-                for (int x = 0; x < buf.w; x++) {
+            for (int y = 0; y < buf.dims.y(); y++) {
+                for (int x = 0; x < buf.dims.x(); x++) {
                     /* TODO #enhancement: assuming
                      * monochrome */
                     double const adj = static_cast<double>(rand() % 10) / 20.0;
                     bool const on = buf.at(x, y).r() + adj > 0.5;
-                    canvas.set(x, y, 0, on);
+                    canvas.set(x, y, on);
                 }
             }
             return true;

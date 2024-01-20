@@ -24,21 +24,20 @@ struct Block {
 };
 
 struct BrailleCanvas {
-    BrailleCanvas (TermInfo const &t);
+    BrailleCanvas (pixel const &dims_);
+
+    static constexpr vec2 scale { 2, 4 };
 
     void set (int64_t x, int64_t y,
-              double depth = 0,
               bool on = true);
     void set (pixel p,
-              double depth = 0,
               bool on = true)
-        { set(p.x(), p.y(), depth, on); }
+        { set(p.x(), p.y(), on); }
     void draw () const;
     void clear ();
 
-    int64_t char_w, char_h;
-    int64_t w, h; // in braille dots
+    /* int64_t char_w, char_h; */
+    /* int64_t w, h; // in braille dots */
+    pixel char_dims, dims;
     std::vector<Block> data;
-    /* TODO #remove */
-    DepthBuffer depth_buf;
 };

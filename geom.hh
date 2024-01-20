@@ -442,13 +442,13 @@ inline mat3 rotation (vec3 axis, double degs) {
 // turn world-space coord ((0, 0) is centre of
 // screen, +y is up) to screen-space ((0, 0) is
 // top-left, +y is down)
-template<typename Canvas,
+template<typename Frame,
          typename T,
          size_t N, std::enable_if_t<N >= 2, bool> = true>
 vec<T, N> screen (vec<T, N> v,
-                  Canvas const &canvas) {
-    v.x() =  v.x() + canvas.w / 2;
-    v.y() = -v.y() + canvas.h / 2;
+                  Frame const &frame) {
+    v.x() =  v.x() + frame.dims.x() / 2;
+    v.y() = -v.y() + frame.dims.y() / 2;
     return v;
 }
 
@@ -459,10 +459,10 @@ inline vec3 perspective (vec3 v, Cam const &cam) {
 
 // perspective projection, & convert to
 // screen-space.
-template<typename Canvas>
-vec3 projected (vec3 v, Canvas const &canvas,
+template<typename Frame>
+vec3 projected (vec3 v, Frame const &frame,
                 Cam const &cam) {
-    return screen(perspective(v, cam), canvas);
+    return screen(perspective(v, cam), frame);
 }
 
 vec3 barycentric (vec3 p,

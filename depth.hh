@@ -8,7 +8,7 @@
 
 
 struct DepthBuffer {
-    DepthBuffer (TermInfo const &t,
+    DepthBuffer (pixel const &dims_,
                  double near
                      = -999,
                      /* = std::numeric_limits<double>::max(), */
@@ -30,7 +30,7 @@ struct DepthBuffer {
     double &at (pixel p)
         { return at(p.x(), p.y()); }
 
-    int64_t w, h;
+    pixel dims;
     std::vector<double> data;
     double near, far;
 };

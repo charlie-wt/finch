@@ -14,10 +14,9 @@ struct Text {
 };
 
 
-/* TODO #enhancement: reconcile w/ BrailleCanvas */
 struct TextCanvas {
-    TextCanvas(TermInfo t)
-        : w(t.w), h(t.h), text() {}
+    TextCanvas(pixel dims)
+        : dims(dims), text() {}
 
     void write (Text const &t) {
         /* TODO #bug: clip string to within canvas
@@ -42,6 +41,6 @@ struct TextCanvas {
         ::refresh();
     }
 
-    int64_t w, h;
+    pixel dims;
     std::vector<Text> text;
 };

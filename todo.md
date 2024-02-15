@@ -1,6 +1,6 @@
 * [x] x, y, z aliases for vec storage access
 * [x] do origins more properly
-* [ ] line clipping?
+* [~] line clipping?
 * [x] filled-shading
     * [x] triangle primitive
     * [x] wavefront-style representation

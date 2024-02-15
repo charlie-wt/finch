@@ -55,17 +55,21 @@ int main () {
         /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
         /* cb.draw(c, cam); */
 
+        double const amp = 25;
+
         obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        obj.origin.y() = sin(0.5 * t * M_PI) * 10.;
+        obj.origin.y() = sin(0.5 * t * M_PI) * amp;
         sh.draw(obj, cam);
 
         shell.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        shell.origin.y() = sin(0.5 * t * M_PI) * 10.;
+        shell.origin.y() = sin(0.5 * t * M_PI) * amp;
         sh.draw(shell, cam, DrawMode::LINE);
 
-        tc.write(1, tc.dims.y() - 2, state.speed_report());
+        tc.write(1, tc.dims.y() - 2,
+                 state.speed_report());
 
-        sh.render_to(c);
+        render_rand(sh.buf.col, c);
+        /* sh.render_to(c); */
         /* cb.draw(c, cam); */
         c.draw();
         tc.draw();

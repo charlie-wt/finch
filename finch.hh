@@ -5,7 +5,7 @@
 #include "char.hh"
 #include "dbg.hh"
 #include "draw.hh"
-#include "framebuffer.hh"
+#include "colourbuffer.hh"
 #include "geom.hh"
 #include "line.hh"
 #include "mesh.hh"

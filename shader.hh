@@ -3,24 +3,40 @@
 #include "char.hh"
 #include "depth.hh"
 #include "draw.hh"
-#include "framebuffer.hh"
+#include "colourbuffer.hh"
 #include "mesh.hh"
 #include "term.hh"
 
 
+struct Framebuffer {
+    Framebuffer (pixel canvas_dims)
+        : col(canvas_dims)
+        , depth(canvas_dims)
+        , dims(canvas_dims) {}
+
+    void clear () {
+        col.clear();
+        depth.clear();
+    }
+
+    ColourBuffer col;
+    DepthBuffer depth;
+    pixel dims;
+};
+
 template<typename VertSh,
-         typename FragSh,
-         typename RenderFn>
+         typename FragSh>//,
+         /* typename RenderFn> */
 struct Shader {
     Shader (pixel const &canvas_dims,
             VertSh const &vert_shader,
-            FragSh const &frag_shader,
-            RenderFn const &render_fn)
+            FragSh const &frag_shader)
+            /* RenderFn const &render_fn) */
         : buf(canvas_dims)
-        , depth_buf(canvas_dims)
+        /* , depth_buf(canvas_dims) */
         , vert_shader(vert_shader)
         , frag_shader(frag_shader)
-        , render_fn(render_fn) {}
+        /*, render_fn(render_fn)*/ {}
 
     template <typename Vert>
     void draw (Mesh<Vert> const &mesh,
@@ -124,7 +140,7 @@ struct Shader {
                 for (int64_t x = lft; x < rgt; x++) {
                     double const z =
                         lftz + (x - lft) * z_step;
-                    if (depth_buf.set(x, y, z)) {
+                    if (buf.depth.set(x, y, z)) {
                         /* TODO #cleanup */
                         vec3 fpx
                             { static_cast<double>(x),
@@ -132,9 +148,8 @@ struct Shader {
                               static_cast<double>(z) };
                         vec3 const bc = barycentric(
                             fpx, flow, fmid, fhigh);
-                        buf.set(x, y,
-                                frag_shader(
-                                    fpx, bc, verts));
+                        buf.col.set(x, y,
+                            frag_shader(fpx, bc, verts));
                     }
                 }
             }
@@ -161,7 +176,7 @@ struct Shader {
                 for (int64_t x = lft; x < rgt; x++) {
                     double const z =
                         lftz + (x - lft) * z_step;
-                    if (depth_buf.set(x, y, z)) {
+                    if (buf.depth.set(x, y, z)) {
                         /* TODO #cleanup */
                         vec3 fpx
                             { static_cast<double>(x),
@@ -169,9 +184,8 @@ struct Shader {
                               static_cast<double>(z) };
                         vec3 const bc = barycentric(
                             fpx, flow, fmid, fhigh);
-                        buf.set(x, y,
-                                frag_shader(
-                                    fpx, bc, verts));
+                        buf.col.set(x, y,
+                            frag_shader(fpx, bc, verts));
                     }
                 }
             }
@@ -218,11 +232,19 @@ struct Shader {
 
             auto x = st.x();
             auto y = st.y();
+            bool was_oob = false;
             while (true) {
+                bool const oob =
+                    x < 0 || x > buf.dims.x() ||
+                    y < 0 || y > buf.dims.y();
+                if (!was_oob && oob)
+                    break;
+                was_oob = oob;
+
                 /* TODO #correctness: x is discretised */
                 double const z = start.z() +
                     (x - st.x()) * zstp;
-                if (depth_buf.set(x, y, z)) {
+                if (buf.depth.set(x, y, z)) {
                     /* TODO #cleanup */
                     vec3 fpx
                         { static_cast<double>(x),
@@ -231,9 +253,8 @@ struct Shader {
                     vec3 const bc = barycentric(
                         fpx, verts[0].pos,
                         verts[1].pos, verts[2].pos);
-                    buf.set(x, y,
-                            frag_shader(
-                                fpx, bc, verts));
+                    buf.col.set(x, y,
+                        frag_shader(fpx, bc, verts));
                 }
 
                 if (x == nd.x() && y == nd.y())
@@ -260,23 +281,22 @@ struct Shader {
 
     void clear () {
         buf.clear();
-        depth_buf.clear();
     }
 
-    template <typename Canvas>
-    bool render_to (Canvas &canvas) {
-        if (canvas.dims != buf.dims)
-            return false;
+    /* template <typename Canvas> */
+    /* bool render_to (Canvas &canvas) { */
+    /*     if (canvas.dims != buf.dims) */
+    /*         return false; */
 
-        return render_fn(buf, canvas);
-    }
+    /*     return render_fn(buf, canvas); */
+    /* } */
 
     Framebuffer buf;
-    DepthBuffer depth_buf;
+    /* DepthBuffer depth_buf; */
 
     VertSh vert_shader;
     FragSh frag_shader;
-    RenderFn render_fn;
+    /* RenderFn render_fn; */
 };
 
 template <typename Vert>
@@ -290,7 +310,7 @@ auto unlit_shader (pixel const &canvas_dims) {
             // apply origin & project
             v.pos = projected(
                 v.pos + mesh.origin,
-                buf, cam);
+                buf.col, cam);
             return v;
         },
         [](vec3 pos,
@@ -298,19 +318,19 @@ auto unlit_shader (pixel const &canvas_dims) {
            std::array<Vert, 3> verts) {
             (void)pos; (void)bc; (void)verts;
             return rgb::ones();
-        },
-        [](Framebuffer const &buf,
-           auto &canvas) {
-            for (int y = 0; y < buf.dims.y(); y++) {
-                for (int x = 0; x < buf.dims.x(); x++) {
-                    /* TODO #enhancement: assuming
-                     * monochrome */
-                    bool const on = buf.at(x, y).r() > 0.5;
-                    canvas.set(x, y, on);
-                }
-            }
-            return true;
-        }
+        }//,
+        //[](Framebuffer const &buf,
+        //   auto &canvas) {
+        //    for (int y = 0; y < buf.dims.y(); y++) {
+        //        for (int x = 0; x < buf.dims.x(); x++) {
+        //            /* TODO #enhancement: assuming
+        //             * monochrome */
+        //            bool const on = buf.at(x, y).r() > 0.5;
+        //            canvas.set(x, y, on);
+        //        }
+        //    }
+        //    return true;
+        //}
     );
 }
 
@@ -325,7 +345,7 @@ auto lit_shader (pixel const &canvas_dims) {
             // apply origin & project
             v.pos = projected(
                 v.pos + mesh.origin,
-                buf, cam);
+                buf.col, cam);
             return v;
         },
         [](vec3 pos,
@@ -339,20 +359,20 @@ auto lit_shader (pixel const &canvas_dims) {
             };
             double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
-        },
-        [](Framebuffer const &buf,
-           auto &canvas) {
-            for (int y = 0; y < buf.dims.y(); y++) {
-                for (int x = 0; x < buf.dims.x(); x++) {
-                    /* TODO #enhancement: assuming
-                     * monochrome */
-                    double const adj = static_cast<double>(rand() % 10) / 20.0;
-                    bool const on = buf.at(x, y).r() + adj > 0.5;
-                    canvas.set(x, y, on);
-                }
-            }
-            return true;
-        }
+        }//,
+        /* [](Framebuffer const &buf, */
+        /*    auto &canvas) { */
+        /*     for (int y = 0; y < buf.dims.y(); y++) { */
+        /*         for (int x = 0; x < buf.dims.x(); x++) { */
+        /*             /1* TODO #enhancement: assuming */
+        /*              * monochrome *1/ */
+        /*             double const adj = static_cast<double>(rand() % 10) / 20.0; */
+        /*             bool const on = buf.at(x, y).r() + adj > 0.5; */
+        /*             canvas.set(x, y, on); */
+        /*         } */
+        /*     } */
+        /*     return true; */
+        /* } */
     );
 }
 
@@ -367,7 +387,7 @@ auto flat_lit_shader (pixel const &canvas_dims) {
             // apply origin & project
             v.pos = projected(
                 v.pos + mesh.origin,
-                buf, cam);
+                buf.col, cam);
             return v;
         },
         [](vec3 pos,
@@ -379,19 +399,19 @@ auto flat_lit_shader (pixel const &canvas_dims) {
                 verts[2].pos - verts[0].pos));
             double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
-        },
-        [](Framebuffer const &buf,
-           auto &canvas) {
-            for (int y = 0; y < buf.dims.y(); y++) {
-                for (int x = 0; x < buf.dims.x(); x++) {
-                    /* TODO #enhancement: assuming
-                     * monochrome */
-                    double const adj = static_cast<double>(rand() % 10) / 20.0;
-                    bool const on = buf.at(x, y).r() + adj > 0.5;
-                    canvas.set(x, y, on);
-                }
-            }
-            return true;
-        }
+        }//,
+        /* [](Framebuffer const &buf, */
+        /*    auto &canvas) { */
+        /*     for (int y = 0; y < buf.dims.y(); y++) { */
+        /*         for (int x = 0; x < buf.dims.x(); x++) { */
+        /*             /1* TODO #enhancement: assuming */
+        /*              * monochrome *1/ */
+        /*             double const adj = static_cast<double>(rand() % 10) / 20.0; */
+        /*             bool const on = buf.at(x, y).r() + adj > 0.5; */
+        /*             canvas.set(x, y, on); */
+        /*         } */
+        /*     } */
+        /*     return true; */
+        /* } */
     );
 }

@@ -36,8 +36,6 @@ struct BrailleCanvas {
     void draw () const;
     void clear ();
 
-    /* int64_t char_w, char_h; */
-    /* int64_t w, h; // in braille dots */
     pixel char_dims, dims;
     std::vector<Block> data;
 };

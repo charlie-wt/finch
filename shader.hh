@@ -24,19 +24,14 @@ struct Framebuffer {
     pixel dims;
 };
 
-template<typename VertSh,
-         typename FragSh>//,
-         /* typename RenderFn> */
+template<typename VertSh, typename FragSh>
 struct Shader {
-    Shader (pixel const &canvas_dims,
+    Shader (Framebuffer &buf,
             VertSh const &vert_shader,
             FragSh const &frag_shader)
-            /* RenderFn const &render_fn) */
-        : buf(canvas_dims)
-        /* , depth_buf(canvas_dims) */
+        : buf(buf)
         , vert_shader(vert_shader)
-        , frag_shader(frag_shader)
-        /*, render_fn(render_fn)*/ {}
+        , frag_shader(frag_shader) {}
 
     template <typename Vert>
     void draw (Mesh<Vert> const &mesh,
@@ -287,22 +282,19 @@ struct Shader {
     /* bool render_to (Canvas &canvas) { */
     /*     if (canvas.dims != buf.dims) */
     /*         return false; */
-
     /*     return render_fn(buf, canvas); */
     /* } */
 
-    Framebuffer buf;
-    /* DepthBuffer depth_buf; */
+    Framebuffer &buf;
 
     VertSh vert_shader;
     FragSh frag_shader;
-    /* RenderFn render_fn; */
 };
 
 template <typename Vert>
-auto unlit_shader (pixel const &canvas_dims) {
+auto unlit_shader (Framebuffer &buf) {
     return Shader(
-        canvas_dims,
+        buf,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -318,26 +310,14 @@ auto unlit_shader (pixel const &canvas_dims) {
            std::array<Vert, 3> verts) {
             (void)pos; (void)bc; (void)verts;
             return rgb::ones();
-        }//,
-        //[](Framebuffer const &buf,
-        //   auto &canvas) {
-        //    for (int y = 0; y < buf.dims.y(); y++) {
-        //        for (int x = 0; x < buf.dims.x(); x++) {
-        //            /* TODO #enhancement: assuming
-        //             * monochrome */
-        //            bool const on = buf.at(x, y).r() > 0.5;
-        //            canvas.set(x, y, on);
-        //        }
-        //    }
-        //    return true;
-        //}
+        }
     );
 }
 
 template <typename Vert>
-auto lit_shader (pixel const &canvas_dims) {
+auto lit_shader (Framebuffer &buf) {
     return Shader(
-        canvas_dims,
+        buf,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -359,27 +339,14 @@ auto lit_shader (pixel const &canvas_dims) {
             };
             double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
-        }//,
-        /* [](Framebuffer const &buf, */
-        /*    auto &canvas) { */
-        /*     for (int y = 0; y < buf.dims.y(); y++) { */
-        /*         for (int x = 0; x < buf.dims.x(); x++) { */
-        /*             /1* TODO #enhancement: assuming */
-        /*              * monochrome *1/ */
-        /*             double const adj = static_cast<double>(rand() % 10) / 20.0; */
-        /*             bool const on = buf.at(x, y).r() + adj > 0.5; */
-        /*             canvas.set(x, y, on); */
-        /*         } */
-        /*     } */
-        /*     return true; */
-        /* } */
+        }
     );
 }
 
 template <typename Vert>
-auto flat_lit_shader (pixel const &canvas_dims) {
+auto flat_lit_shader (Framebuffer &buf) {
     return Shader(
-        canvas_dims,
+        buf,
         [](Vert v,
            Mesh<Vert> const &mesh,
            Cam const &cam,
@@ -399,19 +366,6 @@ auto flat_lit_shader (pixel const &canvas_dims) {
                 verts[2].pos - verts[0].pos));
             double const lgt = fabs(nm.dot(vec3 {0,0,1}));
             return rgb { lgt, lgt, lgt };
-        }//,
-        /* [](Framebuffer const &buf, */
-        /*    auto &canvas) { */
-        /*     for (int y = 0; y < buf.dims.y(); y++) { */
-        /*         for (int x = 0; x < buf.dims.x(); x++) { */
-        /*             /1* TODO #enhancement: assuming */
-        /*              * monochrome *1/ */
-        /*             double const adj = static_cast<double>(rand() % 10) / 20.0; */
-        /*             bool const on = buf.at(x, y).r() + adj > 0.5; */
-        /*             canvas.set(x, y, on); */
-        /*         } */
-        /*     } */
-        /*     return true; */
-        /* } */
+        }
     );
 }

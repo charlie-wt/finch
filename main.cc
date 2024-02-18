@@ -13,7 +13,9 @@ int main () {
     /* CharCanvas c(d); */
     TextCanvas tc(d);
 
-    auto sh = flat_lit_shader<PosNorm>(c.dims);
+    Framebuffer buf {c.dims};
+    auto flat = flat_lit_shader<PosNorm>(buf);
+    auto unlit = unlit_shader<PosNorm>(buf);
 
     /* auto cb = Shape::cube(c.dims.y() * 0.5); */
 
@@ -22,7 +24,7 @@ int main () {
 
     /* double mag = 75; */
     /* double inc = 1; */
-    /* sh.depth_buf.near = -mag; */
+    /* buf.depth.near = -mag; */
 
     /* double const w = c.dims.x() * 0.75; */
     /* double const h = c.dims.y() * 0.75; */
@@ -47,9 +49,9 @@ int main () {
                        LoopState const &state) {
         (void)t; (void)dt; (void)count; (void)state;
 
-        c.clear();
+        /* c.clear(); */
         tc.clear();
-        sh.clear();
+        buf.clear();
 
         /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
         /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
@@ -59,27 +61,25 @@ int main () {
 
         obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
         obj.origin.y() = sin(0.5 * t * M_PI) * amp;
-        sh.draw(obj, cam);
+        flat.draw(obj, cam);
 
         shell.rotate({ 0.5, 1, 0.75 }, 60 * dt);
         shell.origin.y() = sin(0.5 * t * M_PI) * amp;
-        sh.draw(shell, cam, DrawMode::LINE);
+        unlit.draw(shell, cam, DrawMode::LINE);
 
         tc.write(1, tc.dims.y() - 2,
                  state.speed_report());
 
-        render_rand(sh.buf.col, c);
-        /* sh.render_to(c); */
-        /* cb.draw(c, cam); */
+        render_rand(buf.col, c);
         c.draw();
         tc.draw();
         draw_dbg();
 
-        /* if (sh.depth_buf.near <= -mag) */
+        /* if (buf.depth.near <= -mag) */
         /*     inc = 1; */
-        /* else if (sh.depth_buf.near >= mag) */
+        /* else if (buf.depth.near >= mag) */
         /*     inc = -1; */
-        /* sh.depth_buf.near += inc; */
+        /* buf.depth_buf.near += inc; */
 
         return false;
     }).start();

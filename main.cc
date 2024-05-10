@@ -28,7 +28,7 @@ int main () {
 
     /* double const w = c.dims.x() * 0.75; */
     /* double const h = c.dims.y() * 0.75; */
-    /* auto obj = Mesh<PosNorm> { */
+    /* auto gobj = Mesh<PosNorm> { */
     /*     { vec3i { 0, 1, 2 } }, */
     /*     { { vec3 { -w/2, -h/2, 0 }, */
     /*         vec3 {    0,    0, 1 } }, */
@@ -38,7 +38,8 @@ int main () {
     /*         vec3 {    0,    0, 1 } } }, */
     /*     vec3 { 0, 0, 0 } */
     /* }; */
-    /* /1* obj.rotate({ 0, 0, 1 }, 90); *1/ */
+    /* auto obj = coloured(gobj, red); */
+    /* obj.rotate({ 0, 0, 1 }, 90); */
 
     Cam const cam { 60, 80 };
     (void) cam;

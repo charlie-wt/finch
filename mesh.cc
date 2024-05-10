@@ -171,3 +171,18 @@ Mesh<PosNorm> sphere (double radius,
 
     return current_mesh;
 }
+
+Mesh<PosNormCol> coloured (Mesh<PosNorm> mesh,
+                           rgb col) {
+    Mesh<PosNormCol> res
+        { mesh.indices, {}, mesh.origin };
+
+    std::transform(mesh.verts.cbegin(),
+                   mesh.verts.cend(),
+                   std::back_inserter(res.verts),
+        [col](PosNorm const &in) {
+            return PosNormCol { in.pos, in.norm, col };
+        });
+
+    return res;
+}

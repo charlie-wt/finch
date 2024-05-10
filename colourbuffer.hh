@@ -1,5 +1,6 @@
 #pragma once
 
+#include "colour.hh"
 #include "geom.hh"
 #include "term.hh"
 
@@ -15,9 +16,9 @@ struct ColourBuffer {
     ColourBuffer (pixel const &canvas_dims);
 
     void set (int64_t x, int64_t y,
-              rgb col = { 1, 1, 1 });
+              rgb col = white);
     void set (pixel p,
-              rgb col = { 1, 1, 1 })
+              rgb col = white)
         { set(p.x(), p.y(), col); }
     void clear ();
 
@@ -41,7 +42,7 @@ bool render_threshold(ColourBuffer const &buf,
         for (int x = 0; x < buf.dims.x(); x++) {
             /* TODO #enhancement: assuming
              * monochrome */
-            bool const on = buf.at(x, y).r() > 0.5;
+            bool const on = buf.at(x, y).r() > 127;
             canvas.set(x, y, on);
         }
     }
@@ -55,8 +56,25 @@ bool render_rand(ColourBuffer const &buf,
         for (int x = 0; x < buf.dims.x(); x++) {
             /* TODO #enhancement: assuming
              * monochrome */
+            double const adj = static_cast<double>(rand() % 127);
+            bool const on = buf.at(x, y).r() + adj > 127;
+            canvas.set(x, y, on);
+        }
+    }
+    return true;
+}
+
+template <typename Canvas>
+bool render_col(ColourBuffer const &buf,
+                Canvas &canvas) {
+    for (int y = 0; y < buf.dims.y(); y++) {
+        for (int x = 0; x < buf.dims.x(); x++) {
+            /* TODO #finish */
+            auto const px = buf.at(x, y);
             double const adj = static_cast<double>(rand() % 10) / 20.0;
-            bool const on = buf.at(x, y).r() + adj > 0.5;
+            double const lightness = px.sum() / (3 * 255);
+            bool const on = lightness + adj > 0.5;
+
             canvas.set(x, y, on);
         }
     }

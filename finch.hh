@@ -3,6 +3,7 @@
 #include "braille.hh"
 #include "camera.hh"
 #include "char.hh"
+#include "colour.hh"
 #include "dbg.hh"
 #include "draw.hh"
 #include "colourbuffer.hh"

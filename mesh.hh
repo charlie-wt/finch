@@ -1,5 +1,6 @@
 #pragma once
 
+#include "colour.hh"
 #include "geom.hh"
 #include "mesh.hh"
 
@@ -60,6 +61,9 @@ template <typename V>
 Mesh<V> operator- (Mesh<V> m, vec3 change)
     { m -= change; return m; }
 
+/* TODO #enhancement: is there a way to have
+ * customisable vert members that's more
+ * inspectable? */
 struct Pos {
     vec3 pos;
 };
@@ -67,6 +71,12 @@ struct Pos {
 struct PosNorm {
     vec3 pos;
     vec3 norm;
+};
+
+struct PosNormCol {
+    vec3 pos;
+    vec3 norm;
+    rgb col;
 };
 
 // shapes
@@ -78,3 +88,6 @@ Mesh<PosNorm> cube (double length);
 
 Mesh<PosNorm> sphere (double radius,
                       int64_t subdivisions = 2);
+
+Mesh<PosNormCol> coloured (Mesh<PosNorm> mesh,
+                           rgb col = black);

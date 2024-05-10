@@ -1,6 +1,7 @@
 #pragma once
 
 #include "char.hh"
+#include "colour.hh"
 #include "depth.hh"
 #include "draw.hh"
 #include "colourbuffer.hh"
@@ -309,7 +310,7 @@ auto unlit_shader (Framebuffer &buf) {
            vec3 bc,
            std::array<Vert, 3> verts) {
             (void)pos; (void)bc; (void)verts;
-            return rgb::ones();
+            return white;
         }
     );
 }
@@ -337,7 +338,7 @@ auto lit_shader (Framebuffer &buf) {
                 verts[1].norm * bc[1] +
                 verts[2].norm * bc[2]
             };
-            double const lgt = fabs(nm.dot(vec3 {0,0,1}));
+            uint8_t const lgt = fabs(nm.dot(vec3 {0,0,1})) * 255;
             return rgb { lgt, lgt, lgt };
         }
     );
@@ -364,8 +365,41 @@ auto flat_lit_shader (Framebuffer &buf) {
             vec3 const nm = norm(cross(
                 verts[1].pos - verts[0].pos,
                 verts[2].pos - verts[0].pos));
-            double const lgt = fabs(nm.dot(vec3 {0,0,1}));
+            uint8_t const lgt = fabs(nm.dot(vec3 {0,0,1})) * 255;
             return rgb { lgt, lgt, lgt };
+        }
+    );
+}
+
+/* TODO #cleanup: make this the non col_ one */
+template <typename Vert>
+auto flat_lit_col_shader (Framebuffer &buf) {
+    return Shader(
+        buf,
+        [](Vert v,
+           Mesh<Vert> const &mesh,
+           Cam const &cam,
+           Framebuffer const &buf) {
+            // apply origin & project
+            v.pos = projected(
+                v.pos + mesh.origin,
+                buf.col, cam);
+            return v;
+        },
+        [](vec3 pos,
+           vec3 bc,
+           std::array<Vert, 3> verts) {
+            (void)pos; (void)bc;
+            vec3 const nm = norm(cross(
+                verts[1].pos - verts[0].pos,
+                verts[2].pos - verts[0].pos));
+            uint8_t const lgt = fabs(nm.dot(vec3 {0,0,1})) * 255;
+            rgb const col {
+                verts[0].col * bc[0] +
+                verts[1].col * bc[1] +
+                verts[2].col * bc[2]
+            };
+            return lgt * col;
         }
     );
 }

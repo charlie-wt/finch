@@ -40,6 +40,13 @@ struct vec : std::array<T, N> {
         return std::sqrt(res);
     }
 
+    T sum () const {
+        T res;
+        for (auto const v : *this)
+            res += v;
+        return res;
+    }
+
     void norm (T length = 1.0) {
         auto const l = this->length();
         if (l)
@@ -64,6 +71,10 @@ struct vec : std::array<T, N> {
             res[i] = static_cast<S>((*this)[i]);
         return res;
     }
+
+    template<typename S>
+    vec<S, N> cast () const
+        { return cast<S, N>(); }
 
     template<typename Q>
     Q to () const
@@ -198,6 +209,9 @@ auto cross (vec<A, 3> const &a,
 template<typename T, size_t N>
 vec<T, N> operator+ (vec<T, N> v, T val)
     { v += val; return v; }
+template<typename T, size_t N>
+vec<T, N> operator+ (T val, vec<T, N> v)
+    { return v + val; }
 template<typename T, typename S, size_t N>
 vec<T, N> operator+ (vec<T, N> v,
                      vec<S, N> const &other)
@@ -211,17 +225,33 @@ vec<T, N> operator- (vec<T, N> v,
                      vec<S, N> const &other)
     { v -= other; return v; }
 
+/* TODO #cleanup */
+/* TODO #finish: the rest */
+template<typename T, typename S, size_t N>
+auto operator* (vec<T, N> const &v, S val) -> vec<decltype(v[0] * val), N> {
+    vec<decltype(v[0] * val), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] * val;
+    return res;
+}
 template<typename T, size_t N>
-vec<T, N> operator* (vec<T, N> v, T val)
-    { v *= val; return v; }
+vec<T, N> operator* (T val, vec<T, N> v)
+    { return v * val; }
 template<typename T, typename S, size_t N>
 vec<T, N> operator* (vec<T, N> v,
                      vec<S, N> const &other)
     { v *= other; return v; }
 
-template<typename T, size_t N>
-vec<T, N> operator/ (vec<T, N> v, T val)
-    { v /= val; return v; }
+template<typename T, typename S, size_t N>
+auto operator/ (vec<T, N> const &v, S val) -> vec<decltype(v[0] / val), N> {
+    vec<decltype(v[0] / val), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] / val;
+    return res;
+}
+/* template<typename T, size_t N> */
+/* vec<T, N> operator/ (vec<T, N> v, T val) */
+/*     { v /= val; return v; } */
 template<typename T, typename S, size_t N>
 vec<T, N> operator/ (vec<T, N> v,
                      vec<S, N> const &other)
@@ -268,8 +298,6 @@ using vec2 = vec2f;
 using vec3 = vec3f;
 using vec4 = vec4f;
 using pixel = vec2i;
-using rgb = vec3;
-using rgba = vec4;
 
 template<typename T, size_t R, size_t C>
 struct mat {

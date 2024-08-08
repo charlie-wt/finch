@@ -17,8 +17,8 @@
 * [ ] colour
     * have set(xy, col) & unset(xy)
     * store colour per block
-        * prob easiesto to add to Block? either way, if we
-          want colour to be optional, it'll have to be
+        * prob easiest to to add to Block? either way, if
+          we want colour to be optional, it'll have to be
           a `vector<optional<rgb>>` or similar...
     * when calling set(xy, col), update the block's colour
       (could do average based on number of set dots in the

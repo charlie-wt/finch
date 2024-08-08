@@ -2,6 +2,7 @@
 
 #include "colour.hh"
 #include "geom.hh"
+#include "threshold.hh"
 #include "term.hh"
 
 #include <vector>
@@ -58,6 +59,22 @@ bool render_rand(ColourBuffer const &buf,
              * monochrome */
             double const adj = static_cast<double>(rand() % 127);
             bool const on = buf.at(x, y).r() + adj > 127;
+            canvas.set(x, y, on);
+        }
+    }
+    return true;
+}
+
+template <typename Canvas>
+bool render_threshold_map(ColourBuffer const &buf,
+                          Canvas &canvas,
+                          ThresholdMap const &map) {
+    for (int y = 0; y < buf.dims.y(); y++) {
+        for (int x = 0; x < buf.dims.x(); x++) {
+            /* TODO #enhancement: assuming
+             * monochrome */
+            bool const on = buf.at(x, y).r() >
+                            map.get(x, y);
             canvas.set(x, y, on);
         }
     }

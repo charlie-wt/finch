@@ -14,6 +14,7 @@
 #include "shape.hh"
 #include "term.hh"
 #include "text.hh"
+#include "threshold.hh"
 #include "time.hh"
 #include "triangle.hh"
 #include "util.hh"

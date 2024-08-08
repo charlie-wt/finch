@@ -44,6 +44,8 @@ int main () {
     Cam const cam { 60, 80 };
     (void) cam;
 
+    auto const tmap = bayer(2);
+
     UpdateLoop(60, [&](double t,
                        double dt,
                        uint64_t count,
@@ -71,7 +73,8 @@ int main () {
         tc.write(1, tc.dims.y() - 2,
                  state.speed_report());
 
-        render_rand(buf.col, c);
+        // render_rand(buf.col, c);
+        render_threshold_map(buf.col, c, tmap);
         c.draw();
         tc.draw();
         draw_dbg();

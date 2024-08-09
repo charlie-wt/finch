@@ -13,14 +13,14 @@ int main () {
     /* CharCanvas c(d); */
     TextCanvas tc(d);
 
-    Framebuffer buf {c.dims};
-    auto flat = flat_lit_shader<PosNorm>(buf);
-    auto unlit = unlit_shader<PosNorm>(buf);
+    // Framebuffer buf {c.dims};
+    // auto flat = flat_lit_shader<PosNorm>(buf);
+    // auto unlit = unlit_shader<PosNorm>(buf);
 
     /* auto cb = Shape::cube(c.dims.y() * 0.5); */
 
-    auto obj = sphere(c.dims.y() * 0.4, 0);
-    auto shell = sphere(c.dims.y() * 0.45, 0);
+    // auto obj = sphere(c.dims.y() * 0.4, 0);
+    // auto shell = sphere(c.dims.y() * 0.45, 0);
 
     /* double mag = 75; */
     /* double inc = 1; */
@@ -44,7 +44,9 @@ int main () {
     Cam const cam { 60, 80 };
     (void) cam;
 
-    auto const tmap = bayer(2);
+    auto const tmap = bayer(5);
+
+    ColourBuffer cb { c.dims };
 
     UpdateLoop(60, [&](double t,
                        double dt,
@@ -54,27 +56,34 @@ int main () {
 
         /* c.clear(); */
         tc.clear();
-        buf.clear();
+        // buf.clear();
 
         /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
         /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
         /* cb.draw(c, cam); */
 
-        double const amp = 25;
+        // double const amp = 25;
 
-        obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        obj.origin.y() = sin(0.5 * t * M_PI) * amp;
-        flat.draw(obj, cam);
+        // obj.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        // obj.origin.y() = sin(0.5 * t * M_PI) * amp;
+        // flat.draw(obj, cam);
 
-        shell.rotate({ 0.5, 1, 0.75 }, 60 * dt);
-        shell.origin.y() = sin(0.5 * t * M_PI) * amp;
-        unlit.draw(shell, cam, DrawMode::LINE);
+        // shell.rotate({ 0.5, 1, 0.75 }, 60 * dt);
+        // shell.origin.y() = sin(0.5 * t * M_PI) * amp;
+        // unlit.draw(shell, cam, DrawMode::LINE);
 
         tc.write(1, tc.dims.y() - 2,
                  state.speed_report());
 
+        uint8_t amt = (sin(0.5 * t * M_PI) + 1) * 127.5;
+        // uint8_t amt = 255;
+        // uint8_t amt = 0;
+        rgb col { amt, amt, amt };
+        std::fill(cb.data.begin(), cb.data.end(), col);
+
         // render_rand(buf.col, c);
-        render_threshold_map(buf.col, c, tmap);
+        // render_threshold_map(buf.col, c, tmap);
+        render_threshold_map(cb, c, tmap);
         c.draw();
         tc.draw();
         draw_dbg();

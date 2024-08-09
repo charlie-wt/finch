@@ -75,6 +75,7 @@ bool render_threshold_map(ColourBuffer const &buf,
              * monochrome */
             bool const on = buf.at(x, y).r() >
                             map.get(x, y);
+                            // 255 - map.get(x, y);
             canvas.set(x, y, on);
         }
     }

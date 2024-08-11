@@ -11,14 +11,12 @@
     * [x] move the `render_fn`s out of `Shader`
     * [x] don't have `Shader`s own their `Framebuffer`s
     * [x] deal with canvas resolutions better
-* [ ] reconcile `TextCanvas` & `BrailleCanvas`
-    * not sure if worth trying to do this
 * [x] frame timer (w/ av. reporting)
 * [ ] colour
     * have set(xy, col) & unset(xy)
     * store colour per block
-        * prob easiest to to add to Block? either way, if
-          we want colour to be optional, it'll have to be
+        * prob easiest to add to Block? either way, if we
+          want colour to be optional, it'll have to be
           a `vector<optional<rgb>>` or similar...
     * when calling set(xy, col), update the block's colour
       (could do average based on number of set dots in the
@@ -39,4 +37,8 @@
 * [ ] particles?
 * [x] proper makefile
 * [x] put on github/lab
+* [ ] try to conceptify some things (canvases,
+      `UpdateLoop` body etc.)
+* [ ] test dtypes
+* [ ] proper transformations
 

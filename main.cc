@@ -17,14 +17,8 @@ int main () {
     auto flat = flat_lit_shader<PosNorm>(buf);
     auto unlit = unlit_shader<PosNorm>(buf);
 
-    /* auto cb = Shape::cube(c.dims.y() * 0.5); */
-
     auto obj = sphere(c.dims.y() * 0.4, 0);
     auto shell = sphere(c.dims.y() * 0.45, 0);
-
-    /* double mag = 75; */
-    /* double inc = 1; */
-    /* buf.depth.near = -mag; */
 
     /* double const w = c.dims.x() * 0.75; */
     /* double const h = c.dims.y() * 0.75; */
@@ -46,21 +40,14 @@ int main () {
 
     auto const tmap = bayer(1);
 
-    // ColourBuffer cb { c.dims };
-
     UpdateLoop(60, [&](double t,
                        double dt,
                        uint64_t count,
                        LoopState const &state) {
         (void)t; (void)dt; (void)count; (void)state;
 
-        /* c.clear(); */
         tc.clear();
         buf.clear();
-
-        /* cb.rotate({ 0.5, 1, 0.75 }, 60 * dt); */
-        /* cb.origin.y() = sin(0.5 * t * M_PI) * 10.; */
-        /* cb.draw(c, cam); */
 
         double const amp = 25;
 
@@ -75,23 +62,11 @@ int main () {
         tc.write(1, tc.dims.y() - 2,
                  state.speed_report());
 
-        // uint8_t amt = (sin(0.25 * t * M_PI) + 1) * 127.5;
-        // // uint8_t amt = 255;
-        // rgb col { amt, amt, amt };
-        // std::fill(cb.data.begin(), cb.data.end(), col);
-
         // render_rand(buf.col, c);
         render_threshold_map(buf.col, c, tmap);
-        // render_threshold_map(cb, c, tmap);
         c.draw();
         tc.draw();
         draw_dbg();
-
-        /* if (buf.depth.near <= -mag) */
-        /*     inc = 1; */
-        /* else if (buf.depth.near >= mag) */
-        /*     inc = -1; */
-        /* buf.depth_buf.near += inc; */
 
         return false;
     }).start();

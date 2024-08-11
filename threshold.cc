@@ -11,8 +11,8 @@ ThresholdMap bayer (uint64_t level) {
 
     while (current_level < level) {
         ThresholdMap curr(prev.w * 2, prev.h * 2);
-        float const x_sc = base.w/curr.w;
-        float const y_sc = base.h/curr.h;
+        float const x_sc = static_cast<float>(base.w)/curr.w;
+        float const y_sc = static_cast<float>(base.h)/curr.h;
 
         for (uint64_t y = 0; y < curr.h; y++) {
             for (uint64_t x = 0; x < curr.w; x++) {

@@ -35,7 +35,7 @@ uint8_t Block::count () const {
 
 BrailleCanvas::BrailleCanvas (pixel const &char_dims_)
     : char_dims(char_dims_)
-    , dims(char_dims_ * BrailleCanvas::scale)
+    , dims((char_dims_ * BrailleCanvas::scale).to<pixel>())
     , data(char_dims_.x() * char_dims_.y(), { 0 }) {}
 
 bool BrailleCanvas::set (int64_t x, int64_t y,

@@ -206,56 +206,85 @@ auto cross (vec<A, 3> const &a,
              a[0] * b[1] - a[1] * b[0] };
 };
 
-template<typename T, size_t N>
-vec<T, N> operator+ (vec<T, N> v, T val)
-    { v += val; return v; }
-template<typename T, size_t N>
-vec<T, N> operator+ (T val, vec<T, N> v)
+template<typename T, typename S, size_t N>
+auto operator+ (vec<T, N> const &v, S val) {
+    vec<decltype(v[0] + val), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] + val;
+    return res;
+}
+template<typename T, typename S, size_t N>
+auto operator+ (S val, vec<T, N> const &v)
     { return v + val; }
 template<typename T, typename S, size_t N>
-vec<T, N> operator+ (vec<T, N> v,
-                     vec<S, N> const &other)
-    { v += other; return v; }
+auto operator+ (vec<T, N> v,
+                vec<S, N> const &other) {
+    vec<decltype(v[0] + other[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] + other[i];
+    return res;
+}
 
-template<typename T, size_t N>
-vec<T, N> operator- (vec<T, N> v, T val)
-    { v -= val; return v; }
 template<typename T, typename S, size_t N>
-vec<T, N> operator- (vec<T, N> v,
-                     vec<S, N> const &other)
-    { v -= other; return v; }
+auto operator- (vec<T, N> const &v, S val)
+    { return v + (-val); }
+template<typename T, typename S, size_t N>
+auto operator- (S val, vec<T, N> const &v) {
+    vec<decltype(val - v[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = val - v[i];
+    return res;
+}
+template<typename T, typename S, size_t N>
+auto operator- (vec<T, N> v,
+                vec<S, N> const &other) {
+    vec<decltype(v[0] - other[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] - other[i];
+    return res;
+}
 
-/* TODO #cleanup */
-/* TODO #finish: the rest */
 template<typename T, typename S, size_t N>
-auto operator* (vec<T, N> const &v, S val) -> vec<decltype(v[0] * val), N> {
+auto operator* (vec<T, N> const &v, S val) {
     vec<decltype(v[0] * val), N> res;
     for (size_t i = 0; i < N; i++)
         res[i] = v[i] * val;
     return res;
 }
-template<typename T, size_t N>
-vec<T, N> operator* (T val, vec<T, N> v)
+template<typename T, typename S, size_t N>
+auto operator* (S val, vec<T, N> const &v)
     { return v * val; }
 template<typename T, typename S, size_t N>
-vec<T, N> operator* (vec<T, N> v,
-                     vec<S, N> const &other)
-    { v *= other; return v; }
+auto operator* (vec<T, N> v,
+                vec<S, N> const &other) {
+    vec<decltype(v[0] * other[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] * other[i];
+    return res;
+}
 
 template<typename T, typename S, size_t N>
-auto operator/ (vec<T, N> const &v, S val) -> vec<decltype(v[0] / val), N> {
+auto operator/ (vec<T, N> const &v, S val) {
     vec<decltype(v[0] / val), N> res;
     for (size_t i = 0; i < N; i++)
         res[i] = v[i] / val;
     return res;
 }
-/* template<typename T, size_t N> */
-/* vec<T, N> operator/ (vec<T, N> v, T val) */
-/*     { v /= val; return v; } */
 template<typename T, typename S, size_t N>
-vec<T, N> operator/ (vec<T, N> v,
-                     vec<S, N> const &other)
-    { v /= other; return v; }
+auto operator/ (S val, vec<T, N> const &v) {
+    vec<decltype(val / v[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = val / v[i];
+    return res;
+}
+template<typename T, typename S, size_t N>
+auto operator/ (vec<T, N> v,
+                vec<S, N> const &other) {
+    vec<decltype(v[0] / other[0]), N> res;
+    for (size_t i = 0; i < N; i++)
+        res[i] = v[i] / other[i];
+    return res;
+}
 
 template<typename T, size_t N>
 std::ostream &operator<< (std::ostream &os,

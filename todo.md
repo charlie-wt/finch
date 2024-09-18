@@ -41,4 +41,5 @@
       `UpdateLoop` body etc.)
 * [ ] test dtypes
 * [ ] proper transformations
+* [ ] tests
 

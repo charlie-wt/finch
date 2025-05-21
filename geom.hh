@@ -309,6 +309,7 @@ std::string pr (vec<T, N> const &v) {
 /* TODO #enhancement: nd `range` iterator, to eg.
  *                    get all pixels in a grid */
 
+// TODO #enhancement: s/double/float/
 template<size_t N>
 using vecf = vec<double, N>;
 
@@ -524,3 +525,144 @@ vec3 projected (vec3 v, Frame const &frame,
 
 vec3 barycentric (vec3 p,
                   vec3 tri1, vec3 tri2, vec3 tri3);
+
+template<typename T>
+struct bivec2 {
+    T xy;
+};
+using bivec2f = bivec2<float>;
+
+template<typename T>
+bivec2<T> outer (vec<T, 2> v1, vec<T, 2> v2) {
+    return { v1.x() * v2.y() - v2.x() * v1.y() };
+}
+
+template<typename T>
+struct rotor2 {
+    T scalar;
+    bivec2<T> bivec;
+};
+
+template<typename T>
+rotor2<T> geom_product (vec<T, 2> v1,
+                        vec<T, 2> v2) {
+    return { v1.dot(v2), outer(v1, v2) };
+}
+
+template<typename T>
+struct bivec3 {
+    T xy;
+    T yz;
+    T xz;
+
+    void operator /= (T a) {
+        xy /= a;
+        yz /= a;
+        xz /= a;
+    }
+};
+using bivec3f = bivec3<float>;
+
+template<typename T>
+bivec3<T> outer (vec<T, 3> v1, vec<T, 3> v2) {
+    return { v1.x() * v2.y() - v2.x() * v1.y(),
+             v1.y() * v2.z() - v2.y() * v1.z(),
+             v1.x() * v2.z() - v2.x() * v1.z() };
+}
+
+template<typename T>
+struct rotor3 {
+    T scalar;
+    bivec3<T> bivec;
+
+    T length_squared () {
+        return scalar * scalar +
+               bivec.xy * bivec.xy +
+               bivec.yz * bivec.yz +
+               bivec.xz * bivec.xz;
+    }
+
+    // TODO #bug: sqrt for all T?
+    T length () {
+        return sqrt(length_squared());
+    }
+
+    void norm () {
+        T const l = length();
+        scalar /= l;
+        bivec /= l;
+    }
+
+    rotor3<T> operator* (rotor3<T> const &r) const {
+        return {
+            scalar * r.scalar -
+            bivec.xy * r.bivec.xy -
+            bivec.xz * r.bivec.xz -
+            bivec.yz * r.bivec.yz,
+            {
+                bivec.xy * r.scalar +
+                    scalar * r.bivec.xy +
+                    bivec.yz * r.bivec.xz -
+                    bivec.xz * r.bivec.yz,
+                bivec.xz * r.scalar +
+                    scalar * r.bivec.xz -
+                    bivec.yz * r.bivec.xy +
+                    bivec.xy * r.bivec.yz,
+                bivec.xz * r.scalar +
+                    scalar * r.bivec.xz +
+                    bivec.xz * r.bivec.xy -
+                    bivec.xy * r.bivec.yz
+            }
+        };
+    }
+
+    static rotor3<T> between_vecs (vec<T, 3> from,
+                                   vec<T, 3> to) {
+        T const a = 1 + from.dot(to);
+        bivec3<T> minus_b = outer(to, from);
+        rotor3<T> res { a, minus_b };
+        res.norm();
+        return res;
+    }
+
+    static rotor3<T> angle_plane (T rads,
+                                  bivec3<T> plane) {
+        T const sin_a = sin(rads / T { 2 });
+        return {
+            cos(rads / T { 2 }),
+            {
+                -sin_a * plane.xy,
+                -sin_a * plane.yz,
+                -sin_a * plane.xz
+            }
+        };
+    }
+};
+using rotor3f = rotor3<float>;
+
+template<typename T>
+vec<T, 3> rotate(vec<T, 3> v, rotor3<T> r) {
+    // q = P x
+    vec<T, 3> const q {
+        r.scalar * v.x() + v.y() * r.bivec.xy + v.z() * r.bivec.xz,
+        r.scalar * v.y() - v.x() * r.bivec.xy + v.z() * r.bivec.yz,
+        r.scalar * v.z() - v.x() * r.bivec.xz - v.x() * r.bivec.yz
+    };
+
+    T const qxyz = v.x() * r.bivec.yz -
+                   v.y() * r.bivec.xz +
+                   v.z() * r.bivec.xy;
+
+    // r = q P*
+    return {
+        r.scalar * q.x() + q.y() * r.bivec.xy + q.z() * r.bivec.xz + qxyz * r.bivec.yz,
+        r.scalar * q.y() - q.x() * r.bivec.xy - qxyz * r.bivec.xz + q.z() * r.bivec.yz,
+        r.scalar * q.z() + qxyz * r.bivec.xy - q.x() * r.bivec.xz - q.y() * r.bivec.yz
+    };
+}
+
+template<typename T>
+rotor3<T> geom_product (vec<T, 3> v1,
+                        vec<T, 3> v2) {
+    return { v1.dot(v2), outer(v1, v2) };
+}

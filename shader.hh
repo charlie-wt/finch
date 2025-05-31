@@ -301,9 +301,9 @@ auto unlit_shader (Framebuffer &buf) {
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
-            v.pos = projected(
+            v.pos = cam.projected(
                 v.pos + mesh.origin,
-                buf.col, cam);
+                buf.col);
             return v;
         },
         [](vec3 pos,
@@ -324,9 +324,9 @@ auto lit_shader (Framebuffer &buf) {
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
-            v.pos = projected(
+            v.pos = cam.projected(
                 v.pos + mesh.origin,
-                buf.col, cam);
+                buf.col);
             return v;
         },
         [](vec3 pos,
@@ -353,9 +353,9 @@ auto flat_lit_shader (Framebuffer &buf) {
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
-            v.pos = projected(
+            v.pos = cam.projected(
                 v.pos + mesh.origin,
-                buf.col, cam);
+                buf.col);
             return v;
         },
         [](vec3 pos,
@@ -381,9 +381,9 @@ auto flat_lit_col_shader (Framebuffer &buf) {
            Cam const &cam,
            Framebuffer const &buf) {
             // apply origin & project
-            v.pos = projected(
+            v.pos = cam.projected(
                 v.pos + mesh.origin,
-                buf.col, cam);
+                buf.col);
             return v;
         },
         [](vec3 pos,

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.hh"
 #include "draw.hh"
 #include "geom.hh"
 
@@ -26,8 +27,8 @@ struct Line3d {
     Line project (Canvas &canvas,
                   Cam const &cam) const {
         return Line3d {
-            projected(start, canvas, cam),
-            projected(end, canvas, cam)
+            cam.projected(start, canvas),
+            cam.projected(end, canvas)
         }.flatten();
     }
 

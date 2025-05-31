@@ -1,7 +1,5 @@
 #pragma once
 
-#include "camera.hh"
-
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -181,6 +179,10 @@ struct vec : std::array<T, N> {
             (*this)[i] /= other[i];
         }
         return *this;
+    }
+
+    T dist (vec<T, N> const &other) const {
+        return (other - *this).length();
     }
 
 private:
@@ -510,19 +512,6 @@ vec<T, N> screen (vec<T, N> v,
     return v;
 }
 
-// perspective projection
-inline vec3 perspective (vec3 v, Cam const &cam) {
-    return v * cam.fov_degs / (cam.dist + v.z());
-}
-
-// perspective projection, & convert to
-// screen-space.
-template<typename Frame>
-vec3 projected (vec3 v, Frame const &frame,
-                Cam const &cam) {
-    return screen(perspective(v, cam), frame);
-}
-
 vec3 barycentric (vec3 p,
                   vec3 tri1, vec3 tri2, vec3 tri3);
 
@@ -637,6 +626,9 @@ struct rotor3 {
             }
         };
     }
+
+    // TODO #finish: look_at?
+
 };
 using rotor3f = rotor3<float>;
 

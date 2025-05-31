@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.hh"
 #include "draw.hh"
 #include "geom.hh"
 #include "line.hh"

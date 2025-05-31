@@ -21,7 +21,7 @@ void draw_fill (std::array<vec3, 3> verts,
     std::transform(verts.begin(), verts.end(),
                    proj.begin(),
         [&](vec3 const &v) {
-            return projected(v, canvas, cam);
+            return cam.projected(v, canvas);
         });
 
     // separate into above/below horizontal,
@@ -156,8 +156,8 @@ void draw (vec2 start, vec2 end,
 template<typename Canvas>
 void draw_line (vec3 start, vec3 end,
                 Canvas &canvas, Cam const &cam) {
-    vec3 const sproj = projected(start, canvas, cam);
-    vec3 const eproj = projected(end, canvas, cam);
+    vec3 const sproj = cam.projected(start, canvas);
+    vec3 const eproj = cam.projected(end, canvas);
 
     // bresenham's
     auto const st = sproj.to<pixel>();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.hh"
 #include "line.hh"
 
 #include <vector>

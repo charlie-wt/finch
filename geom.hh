@@ -560,6 +560,16 @@ bivec3<T> outer (vec<T, 3> v1, vec<T, 3> v2) {
 }
 
 template<typename T>
+struct rotor3;
+
+template<typename T>
+vec<T, 3> rotate(vec<T, 3> v, rotor3<T> r);
+
+template<typename T>
+rotor3<T> geom_product (vec<T, 3> v1,
+                        vec<T, 3> v2);
+
+template<typename T>
 struct rotor3 {
     T scalar;
     bivec3<T> bivec;
@@ -627,8 +637,41 @@ struct rotor3 {
         };
     }
 
+    static rotor3<T> from_quat (vec<T, 4> quat) {
+        return {
+            quat.w(),
+            { -quat.z(), -quat.x(), -quat.y() }
+        };
+    }
+
+    // same rotation, opposite direction (inplace)
+    rotor3<T> reverse () {
+        bivec.xy *= -1;
+        bivec.yz *= -1;
+        bivec.xz *= -1;
+        return *this;
+    }
+
+    // same rotation, opposite direction (outplace)
+    rotor3<T> reversed () const {
+        rotor3<T> res;
+        return res.reverse();
+    }
+
     // TODO #finish: look_at?
 
+    mat<T, 4, 4> to_matrix () const {
+        auto const new_x = rotate(vec<T, 3> { 1.0, 0.0, 0.0f }, this);
+        auto const new_y = rotate(vec<T, 3> { 0.0, 1.0, 0.0f }, this);
+        auto const new_z = rotate(vec<T, 3> { 0.0, 0.0f, 1.0 }, this);
+
+        return {
+            { new_x.x(), new_x.y(), new_x.z(), 0.0 },
+            { new_y.x(), new_y.y(), new_y.z(), 0.0 },
+            { new_z.x(), new_z.y(), new_z.z(), 0.0 },
+            { 0.0, 0.0, 0.0, 1.0 }
+        };
+    }
 };
 using rotor3f = rotor3<float>;
 

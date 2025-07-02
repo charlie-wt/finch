@@ -3,12 +3,14 @@
 #include <algorithm>
 
 
-DepthBuffer::DepthBuffer (pixel const &canvas_dims,
-                          double near, double far)
+DepthBuffer::DepthBuffer (pixel const &canvas_dims)
+                          // TODO #remove
+                          // double near, double far)
     : dims(canvas_dims)
-    , data(dims.x() * dims.y(), far)
-    , near(near)
-    , far(far) { }
+    , data(dims.x() * dims.y(), 1.) { }
+    // TODO #remove
+    // , near(near)
+    // , far(far) { }
 
 bool DepthBuffer::set (int64_t x, int64_t y,
                        double depth) {
@@ -17,8 +19,7 @@ bool DepthBuffer::set (int64_t x, int64_t y,
         return false;
 
     if (at(x, y) < depth ||
-        depth < near ||
-        depth > far)
+        depth < 0 || depth > 1.)
         return false;
 
     at(x, y) = depth;
@@ -26,7 +27,7 @@ bool DepthBuffer::set (int64_t x, int64_t y,
 }
 
 void DepthBuffer::clear () {
-    std::fill(data.begin(), data.end(), far);
+    std::fill(data.begin(), data.end(), 1.);
 }
 
 double &DepthBuffer::at (int64_t x, int64_t y) {

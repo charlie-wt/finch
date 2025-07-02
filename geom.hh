@@ -289,6 +289,10 @@ auto operator/ (vec<T, N> v,
 }
 
 template<typename T, size_t N>
+auto operator- (vec<T, N> const &v)
+    { return v * -1; }
+
+template<typename T, size_t N>
 std::ostream &operator<< (std::ostream &os,
                           vec<T, N> const &v) {
     os << "[";
@@ -456,6 +460,10 @@ mat<T, R, C> operator/ (mat<T, R, C> m, S val)
     { m /= val; return m; }
 
 template<typename T, size_t R, size_t C>
+auto operator- (mat<T, R, C> const &m)
+    { return m * -1; }
+
+template<typename T, size_t R, size_t C>
 std::ostream &operator<< (std::ostream &os,
                           mat<T, R, C> const &m) {
     os << "[";
@@ -466,6 +474,13 @@ std::ostream &operator<< (std::ostream &os,
     }
     os << "]";
     return os;
+}
+
+template<typename T, size_t R, size_t C>
+std::string pr (mat<T, R, C> const &m) {
+    std::stringstream ss;
+    ss << m;
+    return ss.str();
 }
 
 template<size_t R, size_t C>
@@ -499,6 +514,36 @@ inline mat3 rotation (vec3 axis, double degs) {
     } };
 }
 
+template<typename T>
+mat<T, 4, 4> perspective (T fov, T aspect,
+                          T near = 1, T far = 9999) {
+    T const scale = 1. / tan(fov / 2.);
+    T const far_prop = far / (far - near);
+    return {
+        vec<T, 4> { scale / aspect, 0, 0, 0 },
+        vec<T, 4> { 0, scale, 0, 0 },
+        vec<T, 4> { 0, 0, -far_prop, -1 },
+        vec<T, 4> { 0, 0, -far_prop * near, 0 }
+    };
+    // TODO #remove
+    // return {
+    //     vec<T, 4> { scale / aspect, 0, 0, 0 },
+    //     vec<T, 4> { 0, scale, 0, 0 },
+    //     vec<T, 4> { 0, 0, (far + near)/(near - far), (2*far*near)/(near - far) },
+    //     vec<T, 4> { 0, 0, -1, 0 }
+    // };
+
+    // T const tangent = 1. / tan(fov / 2.);
+    // auto const top = near * tangent;
+    // auto const right = top * aspect;
+    // return {
+    //     vec<T, 4> { near/right, 0, 0, 0 },
+    //     vec<T, 4> { 0, near/top, 0, 0 },
+    //     vec<T, 4> { 0, 0, -(far+near)/(far-near), -1 },
+    //     vec<T, 4> { 0, 0, -(2*far*near)/(far-near), 0 }
+    // };
+}
+
 // turn world-space coord ((0, 0) is centre of
 // screen, +y is up) to screen-space ((0, 0) is
 // top-left, +y is down)
@@ -507,8 +552,11 @@ template<typename Frame,
          size_t N, std::enable_if_t<N >= 2, bool> = true>
 vec<T, N> screen (vec<T, N> v,
                   Frame const &frame) {
-    v.x() =  v.x() + frame.dims.x() / 2;
-    v.y() = -v.y() + frame.dims.y() / 2;
+    // TODO #remove
+    // v.x() =  v.x() + frame.dims.x() / 2;
+    // v.y() = -v.y() + frame.dims.y() / 2;
+    v.x() = frame.dims.x() * ( v.x() + 0.5);
+    v.y() = frame.dims.y() * (-v.y() + 0.5);
     return v;
 }
 
@@ -696,8 +744,34 @@ vec<T, 3> rotate(vec<T, 3> v, rotor3<T> r) {
     };
 }
 
+// TODO #remove
+// // TODO #cleanup: method?
+// template<typename T>
+// mat3 to_mat3 (rotor3<T> const &rot) {
+//     return {
+//         rotate({ 1, 0, 0 }, rot),
+//         rotate({ 0, 1, 0 }, rot),
+//         rotate({ 0, 0, 1 }, rot)
+//     };
+// }
+
 template<typename T>
 rotor3<T> geom_product (vec<T, 3> v1,
                         vec<T, 3> v2) {
     return { v1.dot(v2), outer(v1, v2) };
+}
+
+inline mat4 look_at (vec3 const &eye,
+                     vec3 const &at,
+                     vec3 const &up = { 0, 1, 0 }) {
+    auto zaxis = norm(at - eye);
+    auto const xaxis = norm(cross(zaxis, up));
+    auto const yaxis = norm(cross(xaxis, zaxis));
+    zaxis = -zaxis;
+    return {
+        vec4 { xaxis.x(), xaxis.y(), xaxis.z(), -xaxis.dot(eye) },
+        vec4 { yaxis.x(), yaxis.y(), yaxis.z(), -yaxis.dot(eye) },
+        vec4 { zaxis.x(), zaxis.y(), zaxis.z(), -zaxis.dot(eye) },
+        vec4 { 0, 0, 0, 1 }
+    };
 }

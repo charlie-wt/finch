@@ -23,20 +23,19 @@ vec3 projected (vec3 v, Frame const &frame,
 }
 
 struct Cam {
-    double fov_degs;
-    vec3 pos;
-    rotor3f orientation;
+    mat4 view;
+    mat4 proj;
 
-    // perspective projection
-    inline vec3 perspective (vec3 v) const {
-        return v * fov_degs / (pos.dist(v) + v.z());
-    }
+    mat4 view_proj () const { return proj % view; }
 
     // perspective projection, & convert to
     // screen-space.
     template<typename Frame>
     vec3 projected (vec3 v, Frame const &frame) const {
-        return screen(perspective(v), frame);
+        vec4 const looked =
+            // TODO #speed: cache view_proj
+            view_proj() % vec4 {v.x(), v.y(), v.z(), 1.0};
+        return screen((looked / looked.w()).to<vec3>(),
+                      frame);
     }
-
 };

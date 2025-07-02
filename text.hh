@@ -24,6 +24,10 @@ struct TextCanvas {
         text.push_back(t);
     }
 
+    // TODO #enhancement: split by lines,
+    //                    potentially create many
+    //                    `Text`s (drawing doesn't
+    //                    like newlines).
     Text& write (int64_t x, int64_t y,
                 std::wstring const &str) {
         Text const t { x, y, str };
@@ -44,3 +48,12 @@ struct TextCanvas {
     pixel dims;
     std::vector<Text> text;
 };
+
+// very basic; no multibyte char handling
+inline std::wstring ascii2wstr (std::string const &str) {
+    std::wstring res {};
+    res.reserve(str.size());
+    for (auto const c : str)
+        res += static_cast<wchar_t>(c);
+    return res;
+}

@@ -33,13 +33,23 @@
       conveniences)
     * [ ] simple fluid sim?
     * [ ] sprite rendering
-* [ ] movable camera
+* [~] movable camera
 * [ ] particles?
 * [x] proper makefile
 * [x] put on github/lab
 * [ ] try to conceptify some things (canvases,
       `UpdateLoop` body etc.)
 * [ ] test dtypes
-* [ ] proper transformations
+* [~] proper transformations
 * [ ] tests
+* [ ] build as a library; move `main.cc` to `examples`
+      folder
+* [ ] 'scratch space' for shaders
+    * ie. uniforms, attributes passed from vert to frag
+    * this is needed for eg. lighting to work
+      again: lighting frag shader needs
+      world-space coords, but vert shader outputs
+      homogeneous coords (or screen-spqce)
+      & filled shading needs to step through
+      pixels.
 

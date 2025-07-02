@@ -7,14 +7,14 @@
 #include <vector>
 
 
+// NOTE: this records z-values from homogeneous
+// coord space (defined to be looking into +z), so
+// visible values will be in (0,1].
 struct DepthBuffer {
-    DepthBuffer (pixel const &dims_,
-                 double near
-                     = -999,
-                     /* = std::numeric_limits<double>::max(), */
-                 double far
-                     = 999);
-                     /* = std::numeric_limits<double>::min()); */
+    DepthBuffer (pixel const &dims_);
+                 // TODO #remove
+                 // double near = 0.001,
+                 // double far = 1);
 
     bool set (int64_t x, int64_t y,
               double depth = 0.);
@@ -32,5 +32,8 @@ struct DepthBuffer {
 
     pixel dims;
     std::vector<double> data;
-    double near, far;
+    // TODO #remove
+    // // TODO #cleanup: feel like usually these are
+    // // properties of the camera
+    // double near, far;
 };

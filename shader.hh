@@ -57,21 +57,29 @@ struct Shader {
                   mesh.verts[idx[1]],
                   mesh.verts[idx[2]] };
 
+            // TODO #finish: some notion of
+            // 'scratch space', for things like
+            // uniforms & extra attributes. can't
+            // just have a member of Shader, as
+            // that eould be stored per-shader,
+            // not per-draw call.
             for (auto &v : verts)
                 v = vert_shader(v, mesh, cam, buf);
 
-            // back-face culling
-            constexpr bool has_norms =
-                requires(Vert const &v) { v.norm; };
-            if constexpr (has_norms) {
-                auto const nm = vec3 {
-                    verts[0].norm +
-                    verts[1].norm +
-                    verts[2].norm
-                } / 3.0;
-                if (nm.dot(vec3 {0,0,1}) > 0)
-                    continue;
-            }
+            // TODO #bug? or just make the mesh
+            // right?
+            // // back-face culling
+            // constexpr bool has_norms =
+            //     requires(Vert const &v) { v.norm; };
+            // if constexpr (has_norms) {
+            //     auto const nm = vec3 {
+            //         verts[0].norm +
+            //         verts[1].norm +
+            //         verts[2].norm
+            //     } / 3.0;
+            //     if (nm.dot(vec3 {0,0,1}) > 0)
+            //         continue;
+            // }
 
             draw_fill(verts);
         }
@@ -136,7 +144,10 @@ struct Shader {
                 for (int64_t x = lft; x < rgt; x++) {
                     double const z =
                         lftz + (x - lft) * z_step;
+                    // auto const sc = screen(
+                    //         vec2i { x, y }, buf);
                     if (buf.depth.set(x, y, z)) {
+                    // if (buf.depth.set(sc.x(), sc.y(), z)) {
                         /* TODO #cleanup */
                         vec3 fpx
                             { static_cast<double>(x),
@@ -145,6 +156,7 @@ struct Shader {
                         vec3 const bc = barycentric(
                             fpx, flow, fmid, fhigh);
                         buf.col.set(x, y,
+                        // buf.col.set(sc.x(), sc.y(),
                             frag_shader(fpx, bc, verts));
                     }
                 }
@@ -293,19 +305,48 @@ struct Shader {
 };
 
 template <typename Vert>
+auto simple_vert () {
+    // TODO #remove
+    // return [](Vert v,
+    //           Mesh<Vert> const &mesh,
+    //           Cam const &cam,
+    //           Framebuffer const &buf) {
+    //     // apply origin & project
+    //     v.pos = cam.projected(
+    //         v.pos + mesh.origin,
+    //         buf.col);
+    //     return v;
+    // };
+    return [](Vert v,
+              Mesh<Vert> const &mesh,
+              Cam const &cam,
+              Framebuffer const &buf) {
+        // apply origin & project
+        // TODO #remove
+        // auto const moved =
+        //     v.pos + mesh.origin;
+        // vec4 const as4
+        //     {moved.x(), moved.y(), moved.z(), 1.0};
+        // auto const looked =
+        //     // (cam.view % as4).to<vec3>();
+        //     // TODO #speed: cache view_proj
+        //     (cam.view_proj() % as4).to<vec3>();
+        // auto const looked = cam.view @ as4;
+        // v.pos = screen(
+        v.pos = cam.projected(
+            v.pos + mesh.origin,
+            // looked,
+            buf.col);
+
+        return v;
+    };
+}
+
+template <typename Vert>
 auto unlit_shader (Framebuffer &buf) {
     return Shader(
         buf,
-        [](Vert v,
-           Mesh<Vert> const &mesh,
-           Cam const &cam,
-           Framebuffer const &buf) {
-            // apply origin & project
-            v.pos = cam.projected(
-                v.pos + mesh.origin,
-                buf.col);
-            return v;
-        },
+        simple_vert<Vert>(),
         [](vec3 pos,
            vec3 bc,
            std::array<Vert, 3> verts) {
@@ -319,16 +360,7 @@ template <typename Vert>
 auto lit_shader (Framebuffer &buf) {
     return Shader(
         buf,
-        [](Vert v,
-           Mesh<Vert> const &mesh,
-           Cam const &cam,
-           Framebuffer const &buf) {
-            // apply origin & project
-            v.pos = cam.projected(
-                v.pos + mesh.origin,
-                buf.col);
-            return v;
-        },
+        simple_vert<Vert>(),
         [](vec3 pos,
            vec3 bc,
            std::array<Vert, 3> verts) {
@@ -348,16 +380,7 @@ template <typename Vert>
 auto flat_lit_shader (Framebuffer &buf) {
     return Shader(
         buf,
-        [](Vert v,
-           Mesh<Vert> const &mesh,
-           Cam const &cam,
-           Framebuffer const &buf) {
-            // apply origin & project
-            v.pos = cam.projected(
-                v.pos + mesh.origin,
-                buf.col);
-            return v;
-        },
+        simple_vert<Vert>(),
         [](vec3 pos,
            vec3 bc,
            std::array<Vert, 3> verts) {
@@ -365,6 +388,9 @@ auto flat_lit_shader (Framebuffer &buf) {
             vec3 const nm = norm(cross(
                 verts[1].pos - verts[0].pos,
                 verts[2].pos - verts[0].pos));
+            // TODO #bug: need to record
+            // world-space coords & dot with cam,
+            // or record view-space & dot w/ fwd
             uint8_t const lgt = fabs(nm.dot(vec3 {0,0,1})) * 255;
             return rgb { lgt, lgt, lgt };
         }
@@ -376,16 +402,7 @@ template <typename Vert>
 auto flat_lit_col_shader (Framebuffer &buf) {
     return Shader(
         buf,
-        [](Vert v,
-           Mesh<Vert> const &mesh,
-           Cam const &cam,
-           Framebuffer const &buf) {
-            // apply origin & project
-            v.pos = cam.projected(
-                v.pos + mesh.origin,
-                buf.col);
-            return v;
-        },
+        simple_vert<Vert>(),
         [](vec3 pos,
            vec3 bc,
            std::array<Vert, 3> verts) {

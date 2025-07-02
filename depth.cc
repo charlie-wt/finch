@@ -4,13 +4,8 @@
 
 
 DepthBuffer::DepthBuffer (pixel const &canvas_dims)
-                          // TODO #remove
-                          // double near, double far)
     : dims(canvas_dims)
     , data(dims.x() * dims.y(), 1.) { }
-    // TODO #remove
-    // , near(near)
-    // , far(far) { }
 
 bool DepthBuffer::set (int64_t x, int64_t y,
                        double depth) {

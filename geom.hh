@@ -525,23 +525,6 @@ mat<T, 4, 4> perspective (T fov, T aspect,
         vec<T, 4> { 0, 0, -far_prop, -1 },
         vec<T, 4> { 0, 0, -far_prop * near, 0 }
     };
-    // TODO #remove
-    // return {
-    //     vec<T, 4> { scale / aspect, 0, 0, 0 },
-    //     vec<T, 4> { 0, scale, 0, 0 },
-    //     vec<T, 4> { 0, 0, (far + near)/(near - far), (2*far*near)/(near - far) },
-    //     vec<T, 4> { 0, 0, -1, 0 }
-    // };
-
-    // T const tangent = 1. / tan(fov / 2.);
-    // auto const top = near * tangent;
-    // auto const right = top * aspect;
-    // return {
-    //     vec<T, 4> { near/right, 0, 0, 0 },
-    //     vec<T, 4> { 0, near/top, 0, 0 },
-    //     vec<T, 4> { 0, 0, -(far+near)/(far-near), -1 },
-    //     vec<T, 4> { 0, 0, -(2*far*near)/(far-near), 0 }
-    // };
 }
 
 // turn world-space coord ((0, 0) is centre of
@@ -552,9 +535,6 @@ template<typename Frame,
          size_t N, std::enable_if_t<N >= 2, bool> = true>
 vec<T, N> screen (vec<T, N> v,
                   Frame const &frame) {
-    // TODO #remove
-    // v.x() =  v.x() + frame.dims.x() / 2;
-    // v.y() = -v.y() + frame.dims.y() / 2;
     v.x() = frame.dims.x() * ( v.x() + 0.5);
     v.y() = frame.dims.y() * (-v.y() + 0.5);
     return v;
@@ -743,17 +723,6 @@ vec<T, 3> rotate(vec<T, 3> v, rotor3<T> r) {
         r.scalar * q.z() + qxyz * r.bivec.xy - q.x() * r.bivec.xz - q.y() * r.bivec.yz
     };
 }
-
-// TODO #remove
-// // TODO #cleanup: method?
-// template<typename T>
-// mat3 to_mat3 (rotor3<T> const &rot) {
-//     return {
-//         rotate({ 1, 0, 0 }, rot),
-//         rotate({ 0, 1, 0 }, rot),
-//         rotate({ 0, 0, 1 }, rot)
-//     };
-// }
 
 template<typename T>
 rotor3<T> geom_product (vec<T, 3> v1,

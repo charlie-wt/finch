@@ -306,36 +306,14 @@ struct Shader {
 
 template <typename Vert>
 auto simple_vert () {
-    // TODO #remove
-    // return [](Vert v,
-    //           Mesh<Vert> const &mesh,
-    //           Cam const &cam,
-    //           Framebuffer const &buf) {
-    //     // apply origin & project
-    //     v.pos = cam.projected(
-    //         v.pos + mesh.origin,
-    //         buf.col);
-    //     return v;
-    // };
     return [](Vert v,
               Mesh<Vert> const &mesh,
               Cam const &cam,
               Framebuffer const &buf) {
-        // apply origin & project
-        // TODO #remove
-        // auto const moved =
-        //     v.pos + mesh.origin;
-        // vec4 const as4
-        //     {moved.x(), moved.y(), moved.z(), 1.0};
-        // auto const looked =
-        //     // (cam.view % as4).to<vec3>();
-        //     // TODO #speed: cache view_proj
-        //     (cam.view_proj() % as4).to<vec3>();
-        // auto const looked = cam.view @ as4;
-        // v.pos = screen(
-        v.pos = cam.projected(
-            v.pos + mesh.origin,
-            // looked,
+        // world space -> projected screen space
+        v.pos = screen(
+            cam.projected(
+                v.pos + mesh.origin),
             buf.col);
 
         return v;

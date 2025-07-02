@@ -28,14 +28,11 @@ struct Cam {
 
     mat4 view_proj () const { return proj % view; }
 
-    // perspective projection, & convert to
-    // screen-space.
-    template<typename Frame>
-    vec3 projected (vec3 v, Frame const &frame) const {
+    // transform to view-space & project.
+    vec3 projected (vec3 v) const {
         vec4 const looked =
             // TODO #speed: cache view_proj
             view_proj() % vec4 {v.x(), v.y(), v.z(), 1.0};
-        return screen((looked / looked.w()).to<vec3>(),
-                      frame);
+        return (looked / looked.w()).to<vec3>();
     }
 };
